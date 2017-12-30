@@ -1,0 +1,33 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Service.Api", "Transaction.Service\Tradeas.Service.Api.csproj", "{DB93F624-70A4-4CCC-9C2E-7A931EB65226}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Colfinancial.Provider", "Tradeas.Colfinancial.Provider\Tradeas.Colfinancial.Provider.csproj", "{592224A3-8370-426C-BF5B-13B497653805}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Service.Models", "Tradeas.Service.Models\Tradeas.Service.Models.csproj", "{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{509D5D2F-223D-45FD-AA64-6526B65BF820}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{509D5D2F-223D-45FD-AA64-6526B65BF820}.Debug|x86.Build.0 = Debug|Any CPU
+		{509D5D2F-223D-45FD-AA64-6526B65BF820}.Release|x86.ActiveCfg = Release|Any CPU
+		{509D5D2F-223D-45FD-AA64-6526B65BF820}.Release|x86.Build.0 = Release|Any CPU
+		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Release|x86.Build.0 = Release|Any CPU
+		{592224A3-8370-426C-BF5B-13B497653805}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{592224A3-8370-426C-BF5B-13B497653805}.Debug|x86.Build.0 = Debug|Any CPU
+		{592224A3-8370-426C-BF5B-13B497653805}.Release|x86.ActiveCfg = Release|Any CPU
+		{592224A3-8370-426C-BF5B-13B497653805}.Release|x86.Build.0 = Release|Any CPU
+		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Debug|x86.Build.0 = Debug|Any CPU
+		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Release|x86.ActiveCfg = Release|Any CPU
+		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

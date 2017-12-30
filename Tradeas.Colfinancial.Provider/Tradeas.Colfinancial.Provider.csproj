@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver" Version="3.8.0" />
+    <PackageReference Include="Selenium.Support" Version="3.8.0" />
+    <PackageReference Include="Selenium.WebDriverBackedSelenium" Version="3.8.0" />
+    <PackageReference Include="MyCouch" Version="5.0.3" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tradeas.Service.Models\Tradeas.Service.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Program.cs" />
+  </ItemGroup>
+</Project>
