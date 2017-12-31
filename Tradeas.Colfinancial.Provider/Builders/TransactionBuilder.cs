@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using log4net;
 using OpenQA.Selenium;
 using Tradeas.Colfinancial.Provider.Models;
@@ -30,6 +31,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
                 if (transactionId.ToLower() == "trx#") continue;
 
                 var orderId = columns[2].Text;
+                var createdDate = columns[3].Text;
                 var symbol = columns[4].Text;
                 var quantity = columns[5].Text;
                 var matchedQuantity = columns[6].Text;
@@ -45,7 +47,8 @@ namespace Tradeas.Colfinancial.Provider.Builders
                     MatchedQuantity = Convert.ToDecimal(matchedQuantity),
                     Price = Convert.ToDecimal(price),
                     Side = (side.ToLower() == "bn") ? "Buy" : "Sell",
-                    Status = status
+                    Status = status,
+                    CreatedDate = DateTime.ParseExact(createdDate, "MM/dd/yyyy  HH:mm:ss", CultureInfo.InvariantCulture)
                 };
                 Transactions.Add(transaction);
                 Logger.Info(transaction);

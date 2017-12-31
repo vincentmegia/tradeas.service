@@ -24,4 +24,9 @@
     <ProjectReference Include="..\Tradeas.Colfinancial.Provider\Tradeas.Colfinancial.Provider.csproj" />
     <ProjectReference Include="..\Tradeas.Service.Models\Tradeas.Service.Models.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="log4net.config.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
