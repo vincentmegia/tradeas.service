@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Tradeas.Colfinancial.Provider.Models;
 using Tradeas.Colfinancial.Provider.Repositories;
 
@@ -27,7 +28,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
                 var jsonList = new List<string>();
                 foreach (var transaction in transactions)
                 {
-                    var json = JsonConvert.SerializeObject(transaction);
+                    var json = JsonConvert.SerializeObject(transaction, new IsoDateTimeConverter { DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffZ" });
                     jsonList.Add(json);
                 }
                 await _transactionRepository.BulkAsync(jsonList);

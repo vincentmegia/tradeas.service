@@ -26,7 +26,8 @@ namespace Tradeas.Service.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                    .AddJsonOptions(options => options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ");
 
             services.AddTransient<IWebDriver>(factory => {
                 var options = new ChromeOptions();

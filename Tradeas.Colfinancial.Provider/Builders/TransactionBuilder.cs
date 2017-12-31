@@ -39,13 +39,12 @@ namespace Tradeas.Colfinancial.Provider.Builders
                 var side = columns[8].Text;
                 var status = columns[9].Text;
 
+                var id = $"col{transactionId}{orderId}{symbol}{matchedQuantity.Replace(",", string.Empty).Replace(".", string.Empty)}{price.Replace(",", string.Empty).Replace(".", string.Empty)}";
                 var transaction = new Transaction
                 {
-                    Id = transactionId + orderId + symbol +
-                        matchedQuantity.Replace(",", string.Empty)
-                            .Replace(".", string.Empty) + 
-                        price.Replace(",", string.Empty)
-                            .Replace(".", string.Empty),
+                    Id = id,
+                    TransactionId = long.Parse(transactionId, NumberStyles.Any),
+                    OrderId = long.Parse(orderId, NumberStyles.Any),
                     Symbol = symbol,
                     Quantity = Convert.ToDecimal(quantity),
                     MatchedQuantity = Convert.ToDecimal(matchedQuantity),

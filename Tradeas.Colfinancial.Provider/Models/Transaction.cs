@@ -8,13 +8,19 @@ namespace Tradeas.Colfinancial.Provider.Models
         [JsonProperty(PropertyName = "_id")]
         public string Id { get; set; }
 
+        [JsonProperty(PropertyName = "transactionId")]
+        public long TransactionId { get; set; }
+
+        [JsonProperty(PropertyName = "orderId")]
+        public long OrderId { get; set; }
+
         [JsonProperty(PropertyName = "symbol")]
         public string Symbol { get; set; }
 
         [JsonProperty(PropertyName = "quantity")]
         public decimal? Quantity { get; set; }
 
-        [JsonProperty(PropertyName = "matchQuantity")]
+        [JsonProperty(PropertyName = "matchedQuantity")]
         public decimal? MatchedQuantity { get; set; }
 
         [JsonProperty(PropertyName = "price")]
@@ -31,7 +37,8 @@ namespace Tradeas.Colfinancial.Provider.Models
 
         public override string ToString()
         {
-            return string.Format("[Transaction: Id={0}, Symbol={1}, Quantity={2}, MatchedQuantity={3}, Price={4}, Side={5}, Status={6}, CreatedDate={7}]", Id, Symbol, Quantity, MatchedQuantity, Price, Side, Status, CreatedDate);
+            return string.Format("[Transaction: Id={0}, TransactionId={1}, OrderId={2}, Symbol={3}, Quantity={4}, MatchedQuantity={5}, Price={6}, Side={7}, Status={8}, CreatedDate={9}]", 
+                                 Id, TransactionId, OrderId, Symbol, Quantity, MatchedQuantity, Price, Side, Status, CreatedDate);
         }
     }
 }
