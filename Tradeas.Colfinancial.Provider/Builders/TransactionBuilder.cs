@@ -41,7 +41,11 @@ namespace Tradeas.Colfinancial.Provider.Builders
 
                 var transaction = new Transaction
                 {
-                    Id = transactionId + orderId + symbol + matchedQuantity + price,
+                    Id = transactionId + orderId + symbol +
+                        matchedQuantity.Replace(",", string.Empty)
+                            .Replace(".", string.Empty) + 
+                        price.Replace(",", string.Empty)
+                            .Replace(".", string.Empty),
                     Symbol = symbol,
                     Quantity = Convert.ToDecimal(quantity),
                     MatchedQuantity = Convert.ToDecimal(matchedQuantity),
