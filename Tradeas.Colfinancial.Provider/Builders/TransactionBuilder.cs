@@ -29,6 +29,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
                 var transactionId = columns[1].Text;
                 if (transactionId.ToLower() == "trx#") continue;
 
+                var orderId = columns[2].Text;
                 var symbol = columns[4].Text;
                 var quantity = columns[5].Text;
                 var matchedQuantity = columns[6].Text;
@@ -38,12 +39,12 @@ namespace Tradeas.Colfinancial.Provider.Builders
 
                 var transaction = new Transaction
                 {
-                    _id = transactionId,
+                    Id = transactionId + orderId + symbol + matchedQuantity + price,
                     Symbol = symbol,
                     Quantity = Convert.ToDecimal(quantity),
                     MatchedQuantity = Convert.ToDecimal(matchedQuantity),
                     Price = Convert.ToDecimal(price),
-                    Side = side,
+                    Side = (side.ToLower() == "bn") ? "Buy" : "Sell",
                     Status = status
                 };
                 Transactions.Add(transaction);
