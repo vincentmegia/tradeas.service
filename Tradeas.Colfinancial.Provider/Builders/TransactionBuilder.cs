@@ -4,18 +4,22 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using log4net;
 using OpenQA.Selenium;
-using Tradeas.Colfinancial.Provider.Models;
+using Tradeas.Models;
+using Tradeas.Strategies;
 
 namespace Tradeas.Colfinancial.Provider.Builders
 {
-    public class TransactionBuilder : IBuilder
+    public class TransactionBuilder : ITransactionBuilder
     {
         private readonly static ILog Logger = LogManager.GetLogger(typeof(TransactionBuilder));
+        private const string DateTimeFormat = "MM/dd/yyyy HH:mm:ss";
         public List<Transaction> Transactions { get; }
+        //private readonly IdStrategy _idStrategy;
 
         public TransactionBuilder()
         {
             Transactions = new List<Transaction>();
+            //_idStrategy = idStrategy;
         }
 
         /// <summary>
@@ -51,7 +55,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
                     Price = Convert.ToDecimal(price),
                     Side = (side.ToLower() == "bn") ? "Buy" : "Sell",
                     Status = status,
-                    CreatedDate = DateTime.ParseExact(createdDate, "MM/dd/yyyy  HH:mm:ss", CultureInfo.InvariantCulture)
+                    CreatedDate = Convert.ToDateTime(createdDate)
                 };
                 Transactions.Add(transaction);
                 Logger.Info(transaction);

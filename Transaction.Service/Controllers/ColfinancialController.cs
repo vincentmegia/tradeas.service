@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Tradeas.Colfinancial.Provider;
-using Tradeas.Service.Models;
+using Tradeas.Models;
 
 namespace Tradeas.Service.Api.Controllers
 {
@@ -10,6 +11,7 @@ namespace Tradeas.Service.Api.Controllers
     public class ColfinancialController : Controller
     {
         private readonly IExtractor _extractor;
+        private static ILog Logger = LogManager.GetLogger(typeof(ColfinancialController));
 
         public ColfinancialController(IExtractor extractor)
         {
@@ -31,27 +33,44 @@ namespace Tradeas.Service.Api.Controllers
             }
             catch(Exception e) 
             {
+                Logger.Error(e);
                 return e.Message;
             }
             return $"transaction {transactionParameter.Frequency} extraction complete";
         }
 
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        [Route("ideas/stage")]
+        public async Task<string> Stage()
         {
+            try
+            {
+                await _extractor.Extract(transactionParameter);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return e.Message;
+            }
+            return $"ideas has been staged.";
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+        //// POST api/values
+        //[HttpPost]
+        //public void Post([FromBody]string value)
+        //{
+        //}
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        //// PUT api/values/5
+        //[HttpPut("{id}")]
+        //public void Put(int id, [FromBody]string value)
+        //{
+        //}
+
+        //// DELETE api/values/5
+        //[HttpDelete("{id}")]
+        //public void Delete(int id)
+        //{
+        //}
     }
 }

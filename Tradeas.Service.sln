@@ -5,7 +5,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Service.Api", "Tran
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Colfinancial.Provider", "Tradeas.Colfinancial.Provider\Tradeas.Colfinancial.Provider.csproj", "{592224A3-8370-426C-BF5B-13B497653805}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Service.Models", "Tradeas.Service.Models\Tradeas.Service.Models.csproj", "{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Models", "Tradeas.Models\Tradeas.Models.csproj", "{0F54A91B-A575-4D66-A186-EF68C1CD3642}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Repositories", "Tradeas.Repositories\Tradeas.Repositories.csproj", "{E99AD81A-52A3-4A49-9308-0D5225DEF67C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Repositories.Tests", "Tradeas.Repositories.Tests\Tradeas.Repositories.Tests.csproj", "{5AE842D9-5683-4D83-9F4B-22A71983B780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Strategies", "Tradeas.Strategies\Tradeas.Strategies.csproj", "{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,9 +31,21 @@ Global
 		{592224A3-8370-426C-BF5B-13B497653805}.Debug|x86.Build.0 = Debug|Any CPU
 		{592224A3-8370-426C-BF5B-13B497653805}.Release|x86.ActiveCfg = Release|Any CPU
 		{592224A3-8370-426C-BF5B-13B497653805}.Release|x86.Build.0 = Release|Any CPU
-		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Debug|x86.Build.0 = Debug|Any CPU
-		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Release|x86.ActiveCfg = Release|Any CPU
-		{8069A1A5-F1E9-4F7C-B08D-1C7C3C4B9742}.Release|x86.Build.0 = Release|Any CPU
+		{0F54A91B-A575-4D66-A186-EF68C1CD3642}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0F54A91B-A575-4D66-A186-EF68C1CD3642}.Debug|x86.Build.0 = Debug|Any CPU
+		{0F54A91B-A575-4D66-A186-EF68C1CD3642}.Release|x86.ActiveCfg = Release|Any CPU
+		{0F54A91B-A575-4D66-A186-EF68C1CD3642}.Release|x86.Build.0 = Release|Any CPU
+		{E99AD81A-52A3-4A49-9308-0D5225DEF67C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E99AD81A-52A3-4A49-9308-0D5225DEF67C}.Debug|x86.Build.0 = Debug|Any CPU
+		{E99AD81A-52A3-4A49-9308-0D5225DEF67C}.Release|x86.ActiveCfg = Release|Any CPU
+		{E99AD81A-52A3-4A49-9308-0D5225DEF67C}.Release|x86.Build.0 = Release|Any CPU
+		{5AE842D9-5683-4D83-9F4B-22A71983B780}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5AE842D9-5683-4D83-9F4B-22A71983B780}.Debug|x86.Build.0 = Debug|Any CPU
+		{5AE842D9-5683-4D83-9F4B-22A71983B780}.Release|x86.ActiveCfg = Release|Any CPU
+		{5AE842D9-5683-4D83-9F4B-22A71983B780}.Release|x86.Build.0 = Release|Any CPU
+		{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

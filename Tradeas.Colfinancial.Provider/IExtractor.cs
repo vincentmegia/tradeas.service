@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Tradeas.Service.Models;
+using Tradeas.Models;
 
 namespace Tradeas.Colfinancial.Provider
 {

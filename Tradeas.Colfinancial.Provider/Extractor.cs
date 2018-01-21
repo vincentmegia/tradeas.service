@@ -2,13 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
-using Tradeas.Colfinancial.Provider.Models;
 using Tradeas.Colfinancial.Provider.Builders;
 using Tradeas.Colfinancial.Provider.Processors;
 using OpenQA.Selenium.Support.UI;
 using System;
 using log4net;
-using Tradeas.Service.Models;
+using Tradeas.Models;
 
 namespace Tradeas.Colfinancial.Provider
 {
@@ -16,10 +15,12 @@ namespace Tradeas.Colfinancial.Provider
     {
         private readonly static ILog Logger = LogManager.GetLogger(typeof(IExtractor));
         private readonly IWebDriver _webDriver;
-        private readonly IBuilder _colfinancialTransactionBuilder;
-        private readonly IDatabaseProcessor _databaseProcessor;
-        private const string LoginPage = "https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp?p=0";
-        private const string HomePage = "https://ph10.colfinancial.com/ape/FINAL2_STARTER/HOME/HOME.asp";
+        private readonly IJournalBuilder _journalBuilder;
+        private readonly IJournalProcessor _journalProcessor;
+        private readonly ITransactionBuilder _transactionBuilder;
+        private readonly ITransactionProcessor _transactionProcessor;
+        private const string LoginPageUrl = "https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp?p=0";
+        private const string HomePageLikeUrl = "ape/FINAL2_STARTER/HOME/HOME.asp";
         private const string User1TextboxName = "txtUser1";
         private const string User2TextboxName = "txtUser2";
         private const string PasswordTextboxName = "txtPassword";
@@ -35,12 +36,16 @@ namespace Tradeas.Colfinancial.Provider
         private const string TableRowTag = "tr";
             
         public Extractor(IWebDriver webDriver,
-                         IBuilder colfinancialTransactionBuilder,
-                         IDatabaseProcessor databaseProcessor)
+                         IJournalProcessor journalProcessor,
+                         IJournalBuilder journalBuilder,
+                         ITransactionBuilder transactionBuilder,
+                         ITransactionProcessor transactionProcessor)
         {
             _webDriver = webDriver;
-            _colfinancialTransactionBuilder = colfinancialTransactionBuilder;
-            _databaseProcessor = databaseProcessor;
+            _journalProcessor = journalProcessor;
+            _journalBuilder = journalBuilder;
+            _transactionBuilder = transactionBuilder;
+            _transactionProcessor = transactionProcessor;
         }
 
         /// <summary>
@@ -54,8 +59,8 @@ namespace Tradeas.Colfinancial.Provider
                 var webDriverWait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(10));
                 _webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
 
-                Logger.Info($"navigating to login page {LoginPage}");
-                _webDriver.Navigate().GoToUrl(LoginPage);
+                Logger.Info($"navigating to login page {LoginPageUrl}");
+                _webDriver.Navigate().GoToUrl(LoginPageUrl);
                 _webDriver.Manage().Window.Maximize();
 
                 var usernameTokens = transactionParameter
@@ -67,11 +72,15 @@ namespace Tradeas.Colfinancial.Provider
                 _webDriver.FindElement(By.Name(PasswordTextboxName)).SendKeys(transactionParameter.LoginCredential.Password);
                 _webDriver.FindElement(By.CssSelector(SubmitButtonSelector)).Click();
 
-                webDriverWait.Until(d => d.Url.ToLower() == HomePage.ToLower());
+                webDriverWait.Until(d =>
+                {
+                    Logger.Info($"checking if url {d.Url.ToLower()} contains {HomePageLikeUrl.ToLower()}");
+                    return d.Url.ToLower().Contains(HomePageLikeUrl.ToLower());
+                });
 
                 //find iframe
-                _webDriver.Navigate().GoToUrl(HomePage);
-                Logger.Info($"navigating to home page {HomePage}");
+                _webDriver.Navigate().GoToUrl(_webDriver.Url);
+                Logger.Info($"navigating to home page {HomePageLikeUrl}");
 
                 _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Id(HeaderFrameId)));
                 _webDriver.FindElement(By.CssSelector(TradeTabSelector)).Click();
@@ -100,8 +109,15 @@ namespace Tradeas.Colfinancial.Provider
                 {
                     var tbody = table.FindElement(By.TagName(TableBodyTag));
                     var rows = tbody.FindElements(By.TagName(TableRowTag));
-                    var transactions = (List<Transaction>)_colfinancialTransactionBuilder.Build(rows);
-                    await _databaseProcessor.BulkAsync(transactions);
+
+                    //blindy insert transactions
+                    //the ones that fail means it already exist,
+                    var transactions = (List<Transaction>) _transactionBuilder.Build(rows);
+                    await _transactionProcessor.Process(transactions);
+                    //var ideas = (List<Idea>)_journalBuilder
+                    //    .Build(rows)
+                    //    .CreateStageIdeas();
+                    //await _journalProcessor.UpdateIdeas(ideas);
                 }
             }
             catch(Exception)
