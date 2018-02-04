@@ -35,7 +35,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
                 .GetIdeasOpenStatus()
                 .GetAwaiter()
                 .GetResult();
-            Ideas = result.Instance;
+            Ideas = result.GetData<List<Idea>>();
 
             //get all transactions
             Transactions = _transactionBuilder.Build(rows);

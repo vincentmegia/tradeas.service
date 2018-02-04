@@ -98,10 +98,11 @@ namespace Tradeas.Colfinancial.Provider
 
                 _webDriver.FindElement(By.CssSelector(MonthlyRadioSelector)).Click();
                 Logger.Info($"selecting monthly trade history");
+                Thread.Sleep(TimeSpan.FromSeconds(3));
                 _webDriver.FindElement(By.Name(TradeHistorySubmitName)).Click();
                 Logger.Info($"monthly trade history click success");
 
-                Thread.Sleep(TimeSpan.FromSeconds(3));
+                Thread.Sleep(TimeSpan.FromSeconds(10));
                 webDriverWait.Until(d => d.FindElement(By.CssSelector(TradeHistoryTableSelector)));
                 // need to test for no trades
                 var tables = _webDriver.FindElements(By.CssSelector(TradeHistoryTableSelector));
@@ -110,18 +111,13 @@ namespace Tradeas.Colfinancial.Provider
                     var tbody = table.FindElement(By.TagName(TableBodyTag));
                     var rows = tbody.FindElements(By.TagName(TableRowTag));
 
-                    //blindy insert transactions
-                    //the ones that fail means it already exist,
                     var transactions = (List<Transaction>) _transactionBuilder.Build(rows);
-                    await _transactionProcessor.Process(transactions);
-                    //var ideas = (List<Idea>)_journalBuilder
-                    //    .Build(rows)
-                    //    .CreateStageIdeas();
-                    //await _journalProcessor.UpdateIdeas(ideas);
+                    var transactionResult = await _transactionProcessor.Process(transactions);
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
+                Logger.Error(e);
                 throw;
             }
             finally

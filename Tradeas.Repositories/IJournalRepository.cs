@@ -6,9 +6,9 @@ namespace Tradeas.Repositories
 {
     public interface IJournalRepository
     {
-        Task<Result<Idea>> GetIdea(Idea idea);
-        Task<Result<Idea>> GetIdea(Transaction transaction);
-        Task<Result<List<Idea>>> GetIdeasOpenStatus();
+        Task<Result> GetIdea(Idea idea);
+        Task<Result> GetIdea(Transaction transaction);
+        Task<Result> GetIdeasOpenStatus();
         Task BulkAsync(List<string> ideasJson);
     }
 }

@@ -6,7 +6,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
 {
     public interface ITransactionProcessor
     {
-        Task<Result<Transaction>> Process(Transaction transaction);
-        Task<Result<List<Transaction>>> Process(List<Transaction> transactions);
+        Task<Result> Process(Transaction transaction);
+        Task<Result> Process(List<Transaction> transactions);
     }
 }

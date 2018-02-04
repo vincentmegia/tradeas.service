@@ -10,6 +10,7 @@ using Tradeas.Colfinancial.Provider;
 using Tradeas.Colfinancial.Provider.Builders;
 using Tradeas.Colfinancial.Provider.Processors;
 using Tradeas.Repositories;
+using Tradeas.Service.Api.Processors;
 
 namespace Tradeas.Service.Api
 {
@@ -38,6 +39,7 @@ namespace Tradeas.Service.Api
                 })
                 .AddTransient<IJournalBuilder, JournalBuilder>()
                 .AddTransient<IJournalProcessor, JournalProcessor>()
+                .AddTransient<IJournalStageProcessor, JournalStageProcessor>()
                 .AddTransient<ITransactionBuilder, TransactionBuilder>()
                 .AddTransient<ITransactionProcessor, TransactionProcessor>()
                 .AddTransient<IJournalRepository>(factory => new JournalRepository("http://127.0.0.1:5984"))

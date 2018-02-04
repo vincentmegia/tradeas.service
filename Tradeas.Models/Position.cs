@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Tradeas.Models
@@ -47,6 +48,24 @@ namespace Tradeas.Models
         {
             Transactions = new List<Transaction>();
             TransactionIds = new List<string>();
+        }
+
+        /// <summary>
+        /// Ises the open.
+        /// </summary>
+        /// <returns><c>true</c>, if open was ised, <c>false</c> otherwise.</returns>
+        public bool IsOpen()
+        {
+            if (Transactions.Count() == 0) return true;
+
+            var totalBuyQuantity = Transactions
+                .Where(transaction => transaction.Side.Equals("buy", StringComparison.CurrentCultureIgnoreCase))
+                .Sum(transaction => transaction.MatchedQuantity);
+            var totalSellQuantity= Transactions
+                .Where(transaction => transaction.Side.Equals("sell", StringComparison.CurrentCultureIgnoreCase))
+                .Sum(transaction => transaction.MatchedQuantity);
+            var isOpen = Math.Abs(totalBuyQuantity.Value - totalSellQuantity.Value) > 0;
+            return isOpen;
         }
 
         /// <summary>

@@ -24,17 +24,20 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// </summary>
         /// <returns>The process.</returns>
         /// <param name="t">T.</param>
-        public async Task<Result<List<Transaction>>> Process(List<Transaction> transactions)
+        public async Task<Result> Process(List<Transaction> transactions)
         {
             //collect new created transactions
             var newTransactions = new List<Transaction>();
             foreach (var transaction in transactions)
             {
-                var response = await _transactionRepository.PutAsync(transaction);
-                if (response.IsSuccessful && response.StatusCode.ToLower() == "created")
-                    newTransactions.Add(response.Instance);
+                if (transaction.PositionId == null)
+                    transaction.PositionId = "0";
+                var result = await _transactionRepository.PutAsync(transaction) as TaskResult;
+                if (result.IsSuccessful.Value && result.StatusCode.ToLower() == "created")
+                    newTransactions.Add(result.GetData<Transaction>());
             }
-            return new Result<List<Transaction>> { IsSuccessful = true, Instance = transactions };
+            var taskResult = new TaskResult { IsSuccessful = true }.SetData(transactions);
+            return taskResult;
         }
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// </summary>
         /// <returns>The process.</returns>
         /// <param name="t">T.</param>
-        public async Task<Result<Transaction>> Process(Transaction t)
+        public async Task<Result> Process(Transaction t)
         {
             throw new System.NotImplementedException();
         }

@@ -4,18 +4,22 @@ using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Tradeas.Colfinancial.Provider;
 using Tradeas.Models;
+using Tradeas.Service.Api.Processors;
 
 namespace Tradeas.Service.Api.Controllers
 {
     [Route("api/colfinancial")]
     public class ColfinancialController : Controller
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ColfinancialController));
         private readonly IExtractor _extractor;
-        private static ILog Logger = LogManager.GetLogger(typeof(ColfinancialController));
+        private readonly IJournalStageProcessor _journalStageProcessor;
 
-        public ColfinancialController(IExtractor extractor)
+        public ColfinancialController(IExtractor extractor,
+                                      IJournalStageProcessor journalStageProcessor)
         {
             _extractor = extractor;
+            _journalStageProcessor = journalStageProcessor;
         }
 
         /// <summary>
@@ -40,12 +44,12 @@ namespace Tradeas.Service.Api.Controllers
         }
 
         [HttpPost]
-        [Route("ideas/stage")]
+        [Route("journal-stage/stage")]
         public async Task<string> Stage()
         {
             try
             {
-                await _extractor.Extract(transactionParameter);
+                await _journalStageProcessor.Process();
             }
             catch (Exception e)
             {
@@ -55,22 +59,20 @@ namespace Tradeas.Service.Api.Controllers
             return $"ideas has been staged.";
         }
 
-        //// POST api/values
-        //[HttpPost]
-        //public void Post([FromBody]string value)
-        //{
-        //}
-
-        //// PUT api/values/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody]string value)
-        //{
-        //}
-
-        //// DELETE api/values/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        [HttpPost]
+        [Route("transactions/fix")]
+        public async Task<string> Fix()
+        {
+            try
+            {
+                await _journalStageProcessor.Process();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return e.Message;
+            }
+            return $"ideas has been staged.";
+        }
     }
 }

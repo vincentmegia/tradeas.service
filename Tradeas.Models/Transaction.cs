@@ -9,7 +9,7 @@ namespace Tradeas.Models
         public string Id { get; set; }
 
         [JsonProperty(PropertyName = "_rev")]
-        public string Revision { get; set; }
+        public string Rev { get; set; }
 
         [JsonProperty(PropertyName = "transactionId")]
         public long? TransactionId { get; set; }
@@ -36,7 +36,7 @@ namespace Tradeas.Models
         public string Status { get; set; }
 
         [JsonProperty(PropertyName = "createdDate")]
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         [JsonProperty(PropertyName = "positionId")]
         public string PositionId { get; set; }
@@ -48,9 +48,9 @@ namespace Tradeas.Models
         /// Shoulds the serialize revision.
         /// </summary>
         /// <returns><c>true</c>, if serialize revision was shoulded, <c>false</c> otherwise.</returns>
-        public bool ShouldSerializeRevision()
+        public bool ShouldSerializeRev()
         {
-            return !string.IsNullOrEmpty(Revision);
+            return !string.IsNullOrEmpty(Rev);
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MyCouch;
 using MyCouch.Requests;
+using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
@@ -16,11 +17,17 @@ namespace Tradeas.Repositories
         /// </summary>
         /// <returns>The add.</returns>
         /// <param name="ideas">Ideas.</param>
-        public async Task BulkAsync(List<string> ideasJson)
+        public async Task<Result> BulkAsync(List<string> ideasJson)
         {
             var request = new BulkRequest();
             request.Include(ideasJson.ToArray());
             var response = await Documents.BulkAsync(request);
+            return new TaskResult
+            {
+                IsSuccessful = response.IsSuccess,
+                StatusCode = response.StatusCode.ToString(),
+                Reason = response.Reason
+            };
         }
     }
 }

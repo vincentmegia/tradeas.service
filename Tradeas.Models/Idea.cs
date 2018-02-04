@@ -6,27 +6,6 @@ namespace Tradeas.Models
 {
     public class Idea
     {
-        /// <summary>
-        /// My Couch framework will populate this with _id
-        /// </summary>
-        /// <value>The document identifier.</value>
-        public string DocumentId
-        {
-            get { return Id; }
-            set { Id = value; }
-        }
-
-
-        /// <summary>
-        /// MYCOUCH framework will populate this with _rev
-        /// </summary>
-        /// <value>The document rev.</value>
-        public string DocumentRev
-        {
-            get { return Revision; }
-            set { Revision = value; }
-        }
-
         [JsonProperty(PropertyName = "_id")] 
         public string Id { get; set; }
 

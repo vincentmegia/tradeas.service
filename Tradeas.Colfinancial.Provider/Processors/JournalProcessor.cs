@@ -15,7 +15,6 @@ namespace Tradeas.Colfinancial.Provider.Processors
         private readonly IJournalStageRepository _journalStageRepository;
         private readonly IJournalRepository _journalRepository;
         private readonly static ILog Logger = LogManager.GetLogger(typeof(JournalProcessor));
-        private const string DateFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
 
         public JournalProcessor(ITransactionRepository transactionRepository,
                                 IJournalStageRepository journalStageRepository,
@@ -39,12 +38,12 @@ namespace Tradeas.Colfinancial.Provider.Processors
 
                 foreach (var idea in ideas)
                 {
-                    var ideaJson = JsonConvert.SerializeObject(idea, new IsoDateTimeConverter { DateTimeFormat = DateFormat });
+                    var ideaJson = JsonConvert.SerializeObject(idea, new IsoDateTimeConverter { DateTimeFormat = Constants.DateFormat });
                     ideasJson.Add(ideaJson);
 
                     foreach (var transaction in idea.Position.Transactions)
                     {
-                        var transactionJson = JsonConvert.SerializeObject(transaction, new IsoDateTimeConverter { DateTimeFormat = DateFormat });
+                        var transactionJson = JsonConvert.SerializeObject(transaction, new IsoDateTimeConverter { DateTimeFormat = Constants.DateFormat });
                         transactionsJson.Add(transactionJson);
                     }
                 }
