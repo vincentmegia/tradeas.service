@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using OpenQA.Selenium;
 using Tradeas.Models;
 
-namespace Tradeas.Colfinancial.Provider.Builders
+namespace Tradeas.Service.Api.Builders
 {
     public interface IJournalBuilder
     {

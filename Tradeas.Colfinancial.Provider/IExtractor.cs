@@ -5,6 +5,6 @@ namespace Tradeas.Colfinancial.Provider
 {
     public interface IExtractor
     {
-        Task Extract(TransactionParameter transactionParameter);
+        Task<Result> Extract(TransactionParameter transactionParameter);
     }
 }

@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using OpenQA.Selenium;
+using Tradeas.Colfinancial.Provider.Builders;
 using Tradeas.Models;
 using Tradeas.Repositories;
 
-namespace Tradeas.Colfinancial.Provider.Builders
+namespace Tradeas.Service.Api.Builders
 {
     public class JournalBuilder : IJournalBuilder
     {
-        private readonly ITransactionBuilder _transactionBuilder;
-        private readonly IJournalRepository _journalRepository;
+        private readonly TransactionBuilder _transactionBuilder;
+        private readonly JournalRepository _journalRepository;
         protected List<Idea> Ideas { get; set; }
         protected List<Transaction> Transactions { get; set; }
 
-        public JournalBuilder(ITransactionBuilder transactionBuilder,
-                              IJournalRepository journalRepository)
+        public JournalBuilder(TransactionBuilder transactionBuilder,
+                              JournalRepository journalRepository)
         {
             _transactionBuilder = transactionBuilder;
             _journalRepository = journalRepository;

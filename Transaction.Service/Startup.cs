@@ -9,7 +9,9 @@ using OpenQA.Selenium.Chrome;
 using Tradeas.Colfinancial.Provider;
 using Tradeas.Colfinancial.Provider.Builders;
 using Tradeas.Colfinancial.Provider.Processors;
+using Tradeas.Colfinancial.Provider.Scrapers;
 using Tradeas.Repositories;
+using Tradeas.Service.Api.Builders;
 using Tradeas.Service.Api.Processors;
 
 namespace Tradeas.Service.Api
@@ -38,6 +40,8 @@ namespace Tradeas.Service.Api
                     return new ChromeDriver(chromeDriverPath, options);
                 })
                 .AddTransient<IJournalBuilder, JournalBuilder>()
+                .AddTransient<ITransactionScraper, TransactionScraper>()
+                .AddTransient<IPortfolioScraper, PortfolioScraper>()
                 .AddTransient<IJournalProcessor, JournalProcessor>()
                 .AddTransient<IJournalStageProcessor, JournalStageProcessor>()
                 .AddTransient<ITransactionBuilder, TransactionBuilder>()

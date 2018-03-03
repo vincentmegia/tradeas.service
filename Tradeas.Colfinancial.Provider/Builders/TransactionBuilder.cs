@@ -11,7 +11,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
 {
     public class TransactionBuilder : ITransactionBuilder
     {
-        private readonly static ILog Logger = LogManager.GetLogger(typeof(TransactionBuilder));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(TransactionBuilder));
         private const string DateTimeFormat = "MM/dd/yyyy HH:mm:ss";
         public List<Transaction> Transactions { get; }
         //private readonly IdStrategy _idStrategy;

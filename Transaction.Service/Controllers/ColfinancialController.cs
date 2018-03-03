@@ -43,6 +43,10 @@ namespace Tradeas.Service.Api.Controllers
             return $"transaction {transactionParameter.Frequency} extraction complete";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("journal-stage/stage")]
         public async Task<string> Stage()
@@ -59,6 +63,10 @@ namespace Tradeas.Service.Api.Controllers
             return $"ideas has been staged.";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("transactions/fix")]
         public async Task<string> Fix()
