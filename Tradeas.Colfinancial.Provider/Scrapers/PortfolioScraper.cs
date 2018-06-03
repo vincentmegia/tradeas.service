@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
@@ -48,9 +49,21 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
             Logger.Info($"portfolio gain/loss%: {portfolioGainLossPercentage}");
             Logger.Info($"portfolio gain/loss: {portfolioGainLossValue}");
 
+            var portfolioSnapshot = new PortfolioSnapshot
+            {
+                TotalEquity= Convert.ToDecimal(accountEquity),
+                Balance= Convert.ToDecimal(actualBalance),
+                BuyingPower = Convert.ToDecimal(buyingPower),
+                GainLossValue = Convert.ToDecimal(portfolioGainLossValue),
+                GainLossPercentage = Convert.ToDecimal(portfolioGainLossPercentage),
+                DayChangePercentage = Convert.ToDecimal(dayChangePercentage),
+                DayChangeValue = Convert.ToDecimal(dayChangeValue),
+                BrokerCode = "Col",
+                CreatedDate = new DateTime?()
+            };
             Logger.Info($"monthly trade history click success");
-
-            return new TaskResult {IsSuccessful = true};
+            var taskResult = new TaskResult {IsSuccessful = true}.SetData(portfolioSnapshot);
+            return taskResult;
         }
     }
 }

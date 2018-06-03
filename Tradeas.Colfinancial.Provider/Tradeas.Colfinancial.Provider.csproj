@@ -3,10 +3,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Selenium.WebDriver" Version="3.8.0" />
-    <PackageReference Include="Selenium.Support" Version="3.8.0" />
-    <PackageReference Include="Selenium.WebDriverBackedSelenium" Version="3.8.0" />
+    <PackageReference Include="Selenium.Support" Version="3.11.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="3.11.0" />
     <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Selenium.WebDriverBackedSelenium" Version="3.11.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tradeas.Models\Tradeas.Models.csproj" />
