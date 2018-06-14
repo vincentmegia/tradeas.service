@@ -18,6 +18,7 @@ namespace Tradeas.Colfinancial.Provider
         private readonly IWebDriver _webDriver;
         private readonly ITransactionScraper _transactionScraper;
         private readonly IPortfolioScraper _portfolioScraper;
+        private readonly BrokerTransactionScraper _brokerTransactionScraper;
 
         private const string LoginPageUrl = "https://www.colfinancial.com/ape/Final2/home/HOME_NL_MAIN.asp?p=0";
         private const string HomePageLikeUrl = "ape/FINAL2_STARTER/HOME/HOME.asp";
@@ -29,11 +30,13 @@ namespace Tradeas.Colfinancial.Provider
             
         public Extractor(IWebDriver webDriver,
                          ITransactionScraper transactionScraper,
-                         IPortfolioScraper portfolioScraper)
+                         IPortfolioScraper portfolioScraper,
+                         BrokerTransactionScraper brokerTransactionScraper)
         {
             _webDriver = webDriver;
             _transactionScraper = transactionScraper;
             _portfolioScraper = portfolioScraper;
+            _brokerTransactionScraper = brokerTransactionScraper;
         }
 
         /// <summary>
@@ -52,13 +55,15 @@ namespace Tradeas.Colfinancial.Provider
                 _webDriver.Navigate().GoToUrl(_webDriver.Url);
                 Logger.Info($"navigating to home page {HomePageLikeUrl}");
 
-                var transactionScraperResult = await _transactionScraper.Scrape(_webDriver);
-                var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
+                //var transactionScraperResult = await _transactionScraper.Scrape(_webDriver);
+                //var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
+                var brokerTransactionScraper = await _brokerTransactionScraper.Scrape(_webDriver, "vita");
 
                 return new TaskResult
                 {
-                    IsSuccessful = transactionScraperResult.IsSuccessful.Value &&
-                                   portfolioScraperResult.IsSuccessful.Value
+                    IsSuccessful = //transactionScraperResult.IsSuccessful.Value &&
+                                   //portfolioScraperResult.IsSuccessful.Value
+                    brokerTransactionScraper.IsSuccessful
                 };
             }
             catch(Exception e)

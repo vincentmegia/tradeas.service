@@ -11,7 +11,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
 {
     public class PortfolioScraper : IPortfolioScraper
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(TransactionScraper));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(TradeTransactionScraper));
         
         /// <summary>
         /// 

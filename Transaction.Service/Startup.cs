@@ -40,15 +40,20 @@ namespace Tradeas.Service.Api
                     return new ChromeDriver(chromeDriverPath, options);
                 })
                 .AddTransient<IJournalBuilder, JournalBuilder>()
-                .AddTransient<ITransactionScraper, TransactionScraper>()
+                .AddTransient<ITransactionScraper, TradeTransactionScraper>()
                 .AddTransient<IPortfolioScraper, PortfolioScraper>()
                 .AddTransient<IJournalProcessor, JournalProcessor>()
                 .AddTransient<IJournalStageProcessor, JournalStageProcessor>()
                 .AddTransient<ITransactionBuilder, TransactionBuilder>()
                 .AddTransient<ITransactionProcessor, TransactionProcessor>()
+                .AddTransient(typeof(BrokerTransactionScraper))
+                .AddTransient(typeof(BrokerTransactionBuilder))
+                .AddTransient(typeof(BrokerTransactionProcessor))
                 .AddTransient<IJournalRepository>(factory => new JournalRepository("http://127.0.0.1:5984"))
                 .AddTransient<ITransactionRepository>(factory => new TransactionRepository("http://127.0.0.1:5984"))
                 .AddTransient<IJournalStageRepository>(factory => new JournalStageRepository("http://127.0.0.1:5984"))
+                .AddTransient<IBrokerTransactionRepository>(factory => new BrokerTransactionRepository("http://127.0.0.1:5984"))
+            
                 .AddTransient<IExtractor, Extractor>();
         }
 

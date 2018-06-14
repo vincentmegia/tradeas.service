@@ -62,7 +62,7 @@ namespace Tradeas.Service.Api.Controllers
             }
             return $"ideas has been staged.";
         }
-
+        
         /// <summary>
         /// 
         /// </summary>

@@ -11,9 +11,9 @@ using Tradeas.Models;
 
 namespace Tradeas.Colfinancial.Provider.Scrapers
 {
-    public class TransactionScraper : ITransactionScraper
+    public class TradeTransactionScraper : ITransactionScraper
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(TransactionScraper));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(TradeTransactionScraper));
         private const string TradeHistorySelector = "a[onclick='ital(43);clickTable(3,2);getwin(43);'][onmouseover='displayTable(3);'][onmouseout='hideTable();']";
         private const string MonthlyRadioSelector = "input[name='rdCompTrade'][value='2']";
         private const string TradeHistorySubmitName = "cmdCompletedTrade";
@@ -23,7 +23,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
         private readonly ITransactionBuilder _transactionBuilder;
         private readonly ITransactionProcessor _transactionProcessor;
 
-        public TransactionScraper(ITransactionBuilder transactionBuilder,
+        public TradeTransactionScraper(ITransactionBuilder transactionBuilder,
                                   ITransactionProcessor transactionProcessor)
         {
             _transactionBuilder = transactionBuilder;
