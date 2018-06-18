@@ -7,7 +7,7 @@ namespace Tradeas.Models
 {
     public class Position
     {
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "_id")]
         public string Id { get; set; }
 
         [JsonProperty(PropertyName = "transctionId")] 

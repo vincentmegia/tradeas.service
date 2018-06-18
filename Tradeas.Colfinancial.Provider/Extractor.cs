@@ -57,7 +57,7 @@ namespace Tradeas.Colfinancial.Provider
 
                 //var transactionScraperResult = await _transactionScraper.Scrape(_webDriver);
                 //var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
-                var brokerTransactionScraper = await _brokerTransactionScraper.Scrape(_webDriver, "vita");
+                var brokerTransactionScraper = await _brokerTransactionScraper.Scrape(_webDriver);
 
                 return new TaskResult
                 {

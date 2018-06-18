@@ -60,7 +60,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
                 brokerTransaction.Details.Add(brokerTransactionDetail);
             }
             Transactions.Add(brokerTransaction);
-            Logger.Info(brokerTransaction);
+            Logger.Info($"created brokerTransaction: {brokerTransaction}");
             return this;
         }
 

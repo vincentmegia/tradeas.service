@@ -31,6 +31,7 @@ namespace Tradeas.Service.Api
             services.AddMvc()
                     .AddJsonOptions(options => options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ");
 
+            var couchdbUrl = "http://127.0.0.1:5984";
             services
                 .AddTransient<IWebDriver>(factory =>
                 {
@@ -49,10 +50,12 @@ namespace Tradeas.Service.Api
                 .AddTransient(typeof(BrokerTransactionScraper))
                 .AddTransient(typeof(BrokerTransactionBuilder))
                 .AddTransient(typeof(BrokerTransactionProcessor))
-                .AddTransient<IJournalRepository>(factory => new JournalRepository("http://127.0.0.1:5984"))
-                .AddTransient<ITransactionRepository>(factory => new TransactionRepository("http://127.0.0.1:5984"))
-                .AddTransient<IJournalStageRepository>(factory => new JournalStageRepository("http://127.0.0.1:5984"))
-                .AddTransient<IBrokerTransactionRepository>(factory => new BrokerTransactionRepository("http://127.0.0.1:5984"))
+                .AddTransient<IJournalRepository>(factory => new JournalRepository(couchdbUrl))
+                .AddTransient<ITransactionRepository>(factory => new TransactionRepository(couchdbUrl))
+                .AddTransient<IJournalStageRepository>(factory => new JournalStageRepository(couchdbUrl))
+                .AddTransient<IBrokerTransactionRepository>(factory => new BrokerTransactionRepository(couchdbUrl))
+                .AddTransient<IImportRepository>(factory => new ImportRepository(couchdbUrl))
+                .AddTransient<ISecurityRepository>(factory => new SecurityRepository(couchdbUrl))
             
                 .AddTransient<IExtractor, Extractor>();
         }

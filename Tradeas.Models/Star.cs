@@ -5,7 +5,7 @@ namespace Tradeas.Models
 {
     public class Star
     {
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "_id")]
         public long Id { get; set; }
 
         [JsonProperty(PropertyName = "class")]

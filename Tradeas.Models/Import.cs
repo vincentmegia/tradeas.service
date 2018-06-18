@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Tradeas.Models
 {
-    public class BrokerTransaction
+    public class Import
     {
         [JsonProperty(PropertyName = "_id")]
         public string Id { get; set; }
-
+        
         [JsonProperty(PropertyName = "symbol")]
         public string Symbol { get; set; }
+        
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; set; }
         
         [JsonProperty(PropertyName = "createdDate")]
         public DateTime? CreatedDate => DateTime.Now;
@@ -24,21 +26,22 @@ namespace Tradeas.Models
         [JsonProperty(PropertyName = "createdBy")]
         public string CreatedBy { get; set; }
 
-        [JsonProperty(PropertyName = "details")]
-        public List<BrokerTransactionDetail> Details { get; }
-
-        public BrokerTransaction()
+        /// <summary>
+        /// don't serialize if id is null for PostAsync operations
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeId()
         {
-            Details = new List<BrokerTransactionDetail>();
+            return !string.IsNullOrEmpty(Id);
         }
-
+        
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(Symbol)}: {Symbol}, {nameof(CreatedDate)}: {CreatedDate}, {nameof(UpdatedDate)}: {UpdatedDate}, {nameof(UpdatedBy)}: {UpdatedBy}, {nameof(CreatedBy)}: {CreatedBy}, {nameof(Details)}: {Details}";
+            return $"{nameof(Id)}: {Id}, {nameof(Symbol)}: {Symbol}, {nameof(Type)}: {Type}, {nameof(CreatedDate)}: {CreatedDate}, {nameof(UpdatedDate)}: {UpdatedDate}, {nameof(UpdatedBy)}: {UpdatedBy}, {nameof(CreatedBy)}: {CreatedBy}";
         }
     }
 }

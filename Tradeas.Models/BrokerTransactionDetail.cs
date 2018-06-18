@@ -43,5 +43,14 @@ namespace Tradeas.Models
         
         [JsonProperty(PropertyName = "createdBy")]
         public string CreatedBy { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{nameof(Code)}: {Code}, {nameof(BuyVolume)}: {BuyVolume}, {nameof(BuyAmount)}: {BuyAmount}, {nameof(BuyAverage)}: {BuyAverage}, {nameof(SellVolume)}: {SellVolume}, {nameof(SellAmount)}: {SellAmount}, {nameof(SellAverage)}: {SellAverage}, {nameof(NetAmount)}: {NetAmount}, {nameof(TotalValue)}: {TotalValue}, {nameof(CreatedDate)}: {CreatedDate}, {nameof(UpdatedDate)}: {UpdatedDate}, {nameof(UpdatedBy)}: {UpdatedBy}, {nameof(CreatedBy)}: {CreatedBy}";
+        }
     }
 }

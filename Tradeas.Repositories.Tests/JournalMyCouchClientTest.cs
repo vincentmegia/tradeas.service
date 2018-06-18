@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Tradeas.Models;
-using Tradeas.Repositories;
 
-namespace Tradeas.Resositories.Tests
+namespace Tradeas.Repositories.Tests
 {
     [TestFixture]
     public class JournalMyCouchClientTest

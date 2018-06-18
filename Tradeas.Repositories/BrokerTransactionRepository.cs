@@ -8,7 +8,7 @@ namespace Tradeas.Repositories
 {
     public class BrokerTransactionRepository : MyCouchClient, IBrokerTransactionRepository
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(TransactionRepository));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionRepository));
 
         public BrokerTransactionRepository(string serverAddress) : base(serverAddress, "broker-transactions")
         {}
@@ -25,7 +25,7 @@ namespace Tradeas.Repositories
             var request = new BulkRequest();
             request.Include(brokerTransactions.ToArray());
             var response = await Documents.BulkAsync(request);
-            Logger.Info($"operaton reason: {response.Reason}");
+            Logger.Info($"operaton status code: {response.StatusCode}");
         }
    }
 }
