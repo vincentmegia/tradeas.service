@@ -10,12 +10,12 @@
     <maxSizeRollBackups value="100"/>
     <maximumFileSize value="15MB"/>
     <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="[%date][%thread][%-5level][App] - %message %newline"/>
+      <conversionPattern value="[%date][%thread][%-5level][%property{symbol}] - %message %newline"/>
     </layout>
   </appender>
   <appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
     <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="[%date][%thread][%-5level][App] - %message %newline"/>
+      <conversionPattern value="[%date][%thread][%-5level][%property{symbol}] - %message %newline"/>
     </layout>
   </appender>
   <root>

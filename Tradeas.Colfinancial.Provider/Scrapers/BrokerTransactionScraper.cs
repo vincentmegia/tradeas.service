@@ -1,82 +1,146 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using log4net;
+using log4net.Core;
 using OpenQA.Selenium;
+using Tradeas.Colfinancial.Provider.Builders;
 using Tradeas.Colfinancial.Provider.Navigators;
+using Tradeas.Colfinancial.Provider.Processors;
 using Tradeas.Colfinancial.Provider.Simulators;
 using Tradeas.Models;
 using Tradeas.Repositories;
 
 namespace Tradeas.Colfinancial.Provider.Scrapers
 {
+    /// <summary>
+    /// Todo: review if objects can be put safely into IOC without being affected by multi threading
+    /// </summary>
     public class BrokerTransactionScraper
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionScraper));
-        private readonly IImportRepository _importRepository; //consider if repository layer is correct in this layer
-        private readonly LoginNavigator _loginNavigator;
-        private readonly BrokerTabNavigator _brokerTabNavigator;
-        private readonly LoginSimulator _loginSimulator;
-        private readonly BrokerTableScraper _brokerTableScraper;
-        
+        private readonly IImportRepository _importRepository;
+        private readonly IImportTrackerRepository _importTrackerRepository;
+        private readonly IBrokerTransactionRepository _brokerTransactionRepository;
 
-        public BrokerTransactionScraper(LoginNavigator loginNavigator,
-                                        BrokerTabNavigator brokerTabNavigator,
-                                        LoginSimulator loginSimulator,
-                                        BrokerTableScraper brokerTableScraper,
-                                        IImportRepository importRepository)
+        public BrokerTransactionScraper(IImportRepository importRepository,
+                                        IBrokerTransactionRepository brokerTransactionRepository,
+                                        IImportTrackerRepository importTrackerRepository)
         {
             _importRepository = importRepository;
-            _loginNavigator = loginNavigator;
-            _brokerTabNavigator = brokerTabNavigator;
-            _loginSimulator = loginSimulator;
-            _brokerTableScraper = brokerTableScraper;
+            _brokerTransactionRepository = brokerTransactionRepository;
+            _importTrackerRepository = importTrackerRepository;
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> Scrape()
+        public async Task<Result> Scrape(TransactionParameter transactionParameter)
         {
+            //design, keep creating new instances to avoid threading issue
+            //leter consider using actor based threads
             var importsResponse = await _importRepository.GetAll();
             var imports = importsResponse
                 .GetData<List<Import>>()
                 .OrderBy(i => i.Symbol);
 
+            var workerCount = 9;
             var webDrivers = new List<IWebDriver>();
-            var batchSize = imports.Count() / 10;
-            for (var index = 0; index >= 9; index++)
+            var batchSize = imports.Count() / workerCount;
+            var skipCounter = 0;
+            var tasks = new List<Task>();
+            for (var index = 0; index <= workerCount; index++)
             {
-                var webDriver = WebDriverFactory.Create();
-                if (index == 0)
+                var batch = imports
+                    .Skip(skipCounter)
+                    .Take(batchSize)
+                    .ToList();
+                skipCounter += batchSize;
+                
+                if (index == 10) Logger.Info($"last batch size: {batch.Count}");
+
+                if (index > 0)
                 {
-                    var loginNavigateResult = await _loginNavigator.Navigate();
-                    var loginSimulateResult = await _loginSimulator.Simulate();
+                    Logger.Info($"sleeping for 30 seconds to allow breathing for previously logged sessions");
+                    Thread.Sleep(TimeSpan.FromSeconds(30));    
                 }
-                
-                var batch = imports.Take(batchSize);
-                var tabNavigatorResult = await _brokerTabNavigator.Navigate();
-                var tableScraper = await _brokerTableScraper.Scrape();
-                
-                webDrivers.Add(webDriver);
-                imports.Skip(batchSize);
+
+                var task = Task
+                    .Factory
+                    .StartNew(() => Process(transactionParameter, batch, webDrivers))
+                    .Unwrap();
+                var symbols = string.Join(",", batch.Select(b => b.Symbol));
+                Logger.Info($"Thread id: {task.Id} will processing the following symbols: {symbols}");
+                tasks.Add(task);
             }
 
-            await _brokerTabNavigator.Navigate();
+            Logger.Info($"waiting for all complete, thread count: {tasks.Count}");
+            Task.WaitAll(tasks.ToArray());
+            Logger.Info("performing webdriver cleanup");
+            foreach (var webDriver in webDrivers)
+            {
+                webDriver.Quit();
+                webDriver.Dispose();
+            }
+
+            Logger.Info("processing retry items");
+            //perform retry items on a single thread
+            var items = DeadQueue.Items();
+            webDrivers.Clear();
+            webDrivers.Add(WebDriverFactory.Create());
+            var retryTask = Task
+                .Factory
+                .StartNew(() => Process(transactionParameter, items, webDrivers))
+                .Unwrap();
+            Task.WaitAll(retryTask);
+            Logger.Info("processing retry items  completed.");
+            Logger.Info("broker transaction processing completed.");
             
-            
-                
-                //switch back to main frame to prevent
-                //webDriver.SwitchTo().ParentFrame();
-                //webDriver.SwitchTo().ParentFrame();
-                //webDriver.SwitchTo().Frame(webDriver.FindElement(By.Id(Constants.HeaderFrameId)));
-                //webDriver.FindElement(By.CssSelector(BrokerSubTabSelector)).Click();
-                //Logger.Info($"broker information sub tab click success");
-                //SelectBrokerTransactionPane(webDriver);
-                //webDriver.SwitchTo().ParentFrame();
-                //SelectBrokerTab(webDriver);
             return new TaskResult {IsSuccessful = true};
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transactionParameter"></param>
+        /// <param name="batch"></param>
+        /// <param name="webDrivers"></param>
+        /// <returns></returns>
+        private async Task Process(TransactionParameter transactionParameter, List<Import> batch, List<IWebDriver> webDrivers)
+        {
+            var webDriver = WebDriverFactory.Create();
+            
+            try
+            {
+                var loginNavigator = new LoginNavigator(webDriver);
+                var loginNavigateResult = await loginNavigator.Navigate();
+
+                var loginSimulator = new LoginSimulator(webDriver, transactionParameter);
+                var loginSimulateResult = await loginSimulator.Simulate();
+
+                Logger.Info("initiating broker navigator");
+                var brokerTabNavigator = new BrokerTabNavigator(webDriver);
+                Logger.Info("broker navigation in progress");
+                var tabNavigatorResult = await brokerTabNavigator.Navigate();
+                Logger.Info("initiating table scraper");
+                var brokerTableScraper = new BrokerTableScraper(batch.ToList(),
+                    new BrokerTransactionBuilder(),
+                    new BrokerTransactionProcessor(_brokerTransactionRepository),
+                    new BrokerTransactionSimulator(webDriver),
+                    brokerTabNavigator,
+                    webDriver,
+                    _importTrackerRepository);
+                var tableScraper = await brokerTableScraper.Scrape();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                //throw;
+            }
+            webDrivers.Add(webDriver);
         }
     }
 }

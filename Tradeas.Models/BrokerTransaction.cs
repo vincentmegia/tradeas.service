@@ -38,7 +38,7 @@ namespace Tradeas.Models
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{nameof(Id)}: {Id}, {nameof(Symbol)}: {Symbol}, {nameof(CreatedDate)}: {CreatedDate}, {nameof(UpdatedDate)}: {UpdatedDate}, {nameof(UpdatedBy)}: {UpdatedBy}, {nameof(CreatedBy)}: {CreatedBy}, {nameof(Details)}: {Details}";
+            return $"{nameof(Id)}: {Id}, {nameof(Symbol)}: {Symbol}, {nameof(CreatedDate)}: {CreatedDate}, {nameof(UpdatedDate)}: {UpdatedDate}, {nameof(UpdatedBy)}: {UpdatedBy}, {nameof(CreatedBy)}: {CreatedBy}, {nameof(Details)}: {Details.Count}";
         }
     }
 }

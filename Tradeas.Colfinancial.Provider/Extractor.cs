@@ -9,7 +9,7 @@ namespace Tradeas.Colfinancial.Provider
 {
     public class Extractor : IExtractor
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(IExtractor));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Extractor));
         private readonly ITransactionScraper _transactionScraper;
         private readonly IPortfolioScraper _portfolioScraper;
         private readonly BrokerTransactionScraper _brokerTransactionScraper;
@@ -32,9 +32,10 @@ namespace Tradeas.Colfinancial.Provider
         /// </summary>
         public async Task<Result> Extract(TransactionParameter transactionParameter)
         {
+            Logger.Info("initiating extraction");
             //var transactionScraperResult = await _transactionScraper.Scrape(_webDriver);
             //var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
-            await _brokerTransactionScraper.Scrape();
+            var result = await _brokerTransactionScraper.Scrape(transactionParameter);
             
             try
             {

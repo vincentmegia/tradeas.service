@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using log4net;
 using MyCouch;
 using MyCouch.Requests;
+using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
@@ -19,13 +20,14 @@ namespace Tradeas.Repositories
         /// </summary>
         /// <returns>The async.</returns>
         /// <param name="brokerTransactions">Ideas json.</param>
-        public async Task BulkAsync(List<string> brokerTransactions)
+        public async Task<Result> BulkAsync(List<string> brokerTransactions)
         {
-            Logger.Info($"performing bulk transctions for broker transaction total: {brokerTransactions.Count}");
+            Logger.Info($"performing bulk transactions for broker with total: {brokerTransactions.Count}");
             var request = new BulkRequest();
             request.Include(brokerTransactions.ToArray());
             var response = await Documents.BulkAsync(request);
             Logger.Info($"operaton status code: {response.StatusCode}");
+            return new TaskResult {IsSuccessful = true};
         }
    }
 }

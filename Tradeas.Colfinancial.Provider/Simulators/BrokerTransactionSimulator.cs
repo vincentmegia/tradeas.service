@@ -40,14 +40,14 @@ namespace Tradeas.Colfinancial.Provider.Simulators
             dateFromSelect.SelectByValue(today);
             Logger.Info($"setting date from value success");
 
-            _webDriver.FindElement(By.Id("bsubmit")).Click();
+            _webDriver.FindElement(By.Id("bsubmit")).Submit();
             Logger.Info($"setting date to value success");
 
             _webDriver.SwitchTo().ParentFrame();
             _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Name("brokertrxnout2")));
 
-            Logger.Info("sleeping for 1mins to wait result of broker transaction query.");
-            Thread.Sleep(TimeSpan.FromMinutes(1));
+            //Logger.Info("sleeping for 1mins to wait result of broker transaction query.");
+            //Thread.Sleep(TimeSpan.FromMinutes(1));
             Logger.Info("awoken from sleep.");
 
             return new TaskResult {IsSuccessful = true};

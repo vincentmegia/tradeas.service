@@ -58,6 +58,7 @@ namespace Tradeas.Service.Api
                 .AddTransient<IImportRepository>(factory => new ImportRepository(couchdbUrl))
                 .AddTransient<ISecurityRepository>(factory => new SecurityRepository(couchdbUrl))
                 .AddTransient<IImportTrackerRepository>(factory => new ImportTrackerRepository(couchdbUrl))
+                .AddTransient<IImportHistoryRepository>(factory => new ImportHistoryRepository(couchdbUrl))
             
                 .AddTransient<IExtractor, Extractor>();
         }

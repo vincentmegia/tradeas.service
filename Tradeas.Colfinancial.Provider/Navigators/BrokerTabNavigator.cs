@@ -20,12 +20,20 @@ namespace Tradeas.Colfinancial.Provider.Navigators
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="transactionParameter"></param>
         /// <returns></returns>
         public async Task<Result> Navigate()
         {
+            return await Navigate(false);
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result> Navigate(bool byPassQuoteTab)
+        {
             _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Id(Constants.HeaderFrameId)));
-            _webDriver.FindElement(By.CssSelector(Constants.QuoteTabSelector)).Click();
+            if (!byPassQuoteTab) _webDriver.FindElement(By.CssSelector(Constants.QuoteTabSelector)).Click();
             Logger.Info($"quote tab click success");
                 
             _webDriver.FindElement(By.CssSelector(Constants.BrokerSubTabSelector)).Click();
@@ -34,10 +42,21 @@ namespace Tradeas.Colfinancial.Provider.Navigators
             Thread.Sleep(TimeSpan.FromSeconds(3));
             _webDriver.SwitchTo().ParentFrame();
             _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Name(Constants.MainFrameId)));
-            _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Name("brokertrxnin2")));
             Logger.Info($"switching to main frame success");
-            
-            return new TaskResult {IsSuccessful = true};          
+            _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Name("brokertrxnin2")));
+
+            return new TaskResult {IsSuccessful = true};
+        }
+
+        /// <summary>
+        /// Returns to 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result> NavigateHeaderFrame()
+        {
+            _webDriver.SwitchTo().ParentFrame();
+            _webDriver.SwitchTo().ParentFrame();
+            return new TaskResult {IsSuccessful = true};
         }
     }
 }

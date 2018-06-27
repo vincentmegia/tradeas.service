@@ -29,11 +29,7 @@ namespace Tradeas.Repositories.Tests
 
             foreach (var exported in exportedList)
             {
-                var item = new ImportTracker
-                {
-                    Id=$"{exported}-{DateTime.Now:yyyyMMMdd}",
-                    Symbol = exported
-                };
+                var item = new ImportTracker(exported);
                 var response = await importTrackerRepository.PostAsync(item);
             }
             Assert.IsTrue(true);

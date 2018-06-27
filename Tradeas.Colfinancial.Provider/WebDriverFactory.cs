@@ -11,6 +11,7 @@ namespace Tradeas.Colfinancial.Provider
         {
             var options = new ChromeOptions();
             //options.AddArgument("--headless");
+            options.AddArgument("-no-sandbox");
             var chromeDriverPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             return new ChromeDriver(chromeDriverPath, options);
         }
