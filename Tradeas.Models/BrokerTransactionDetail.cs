@@ -34,13 +34,13 @@ namespace Tradeas.Models
         
         [JsonProperty(PropertyName = "createdDate")]
         public DateTime? CreatedDate => DateTime.Now;
-
+        
         [JsonProperty(PropertyName = "updatedDate")]
         public DateTime? UpdatedDate { get; set; }
         
         [JsonProperty(PropertyName = "updatedBy")]
         public string UpdatedBy { get; set; }
-
+        
         [JsonProperty(PropertyName = "createdBy")]
         public string CreatedBy { get; set; }
         
