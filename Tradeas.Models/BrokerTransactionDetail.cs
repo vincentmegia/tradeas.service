@@ -40,10 +40,10 @@ namespace Tradeas.Models
         
         [JsonProperty(PropertyName = "updatedBy")]
         public string UpdatedBy { get; set; }
-        
+
         [JsonProperty(PropertyName = "createdBy")]
         public string CreatedBy { get; set; }
-
+        
         /// <summary>
         /// 
         /// </summary>
