@@ -41,4 +41,5 @@ namespace Tradeas.Models
             return $"{nameof(Id)}: {Id}, {nameof(Symbol)}: {Symbol}, {nameof(CreatedDate)}: {CreatedDate}, {nameof(UpdatedDate)}: {UpdatedDate}, {nameof(UpdatedBy)}: {UpdatedBy}, {nameof(CreatedBy)}: {CreatedBy}, {nameof(Details)}: {Details.Count}";
         }
     }
+
 }
