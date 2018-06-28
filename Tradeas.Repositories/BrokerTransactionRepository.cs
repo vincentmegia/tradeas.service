@@ -10,11 +10,9 @@ namespace Tradeas.Repositories
     public class BrokerTransactionRepository : MyCouchClient, IBrokerTransactionRepository
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionRepository));
-
         public BrokerTransactionRepository(string serverAddress) : base(serverAddress, "broker-transactions")
         {}
 
-        
         /// <summary>
         /// Bulks the async.
         /// </summary>
@@ -29,5 +27,6 @@ namespace Tradeas.Repositories
             Logger.Info($"operaton status code: {response.StatusCode}");
             return new TaskResult {IsSuccessful = true};
         }
-   }
+    }
+    
 }
