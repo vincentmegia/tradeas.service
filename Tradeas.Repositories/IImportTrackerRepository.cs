@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using Tradeas.Models;
+﻿using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public interface IImportTrackerRepository
+    public interface IImportTrackerRepository : IRepository
     {
-        Task<Result> PostAsync(ImportTracker importTracker);
-        Task<Result> GetAll();
+        TaskResult PostAsync(ImportTracker importTracker);
+        TaskResult GetAll();
+        TaskResult DeleteAsync(ImportTracker importTracker);
     }
 }

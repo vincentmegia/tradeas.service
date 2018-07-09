@@ -66,7 +66,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
                 }
                 catch (WebDriverException e)
                 {
-                    Debugger.Break();
+                    Logger.Error("error has been encountered trying to retrieve broker infos from columns.",e);
                     throw;
                 }
             }

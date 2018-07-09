@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyCouch;
 using Tradeas.Colfinancial.Provider;
 using Tradeas.Colfinancial.Provider.Builders;
 using Tradeas.Colfinancial.Provider.Navigators;

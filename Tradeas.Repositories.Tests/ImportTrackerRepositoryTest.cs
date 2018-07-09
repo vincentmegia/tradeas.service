@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using Tradeas.Models;
 
@@ -12,7 +9,7 @@ namespace Tradeas.Repositories.Tests
     public class ImportTrackerRepositoryTest
     {
         [Test]
-        public async Task BuildImports()
+        public void BuildImports()
         {
             var importTrackerRepository = new ImportTrackerRepository("http://127.0.0.1:5984");
             var exportedList = new List<string>
@@ -30,7 +27,7 @@ namespace Tradeas.Repositories.Tests
             foreach (var exported in exportedList)
             {
                 var item = new ImportTracker(exported);
-                var response = await importTrackerRepository.PostAsync(item);
+                var response = importTrackerRepository.PostAsync(item);
             }
             Assert.IsTrue(true);
         }

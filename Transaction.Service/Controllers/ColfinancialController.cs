@@ -29,11 +29,11 @@ namespace Tradeas.Service.Api.Controllers
         /// <param name="transactionParameter">Transaction parameter.</param>
         [HttpPost]
         [Route("transactions/extract")]
-        public async Task<string> ExtractTransactions([FromBody]TransactionParameter transactionParameter)
+        public string ExtractTransactions([FromBody]TransactionParameter transactionParameter)
         {
             try
             {
-                await _extractor.Extract(transactionParameter);
+                _extractor.Extract(transactionParameter);
             }
             catch(Exception e) 
             {

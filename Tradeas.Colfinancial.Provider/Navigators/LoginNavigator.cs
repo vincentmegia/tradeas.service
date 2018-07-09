@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using log4net;
+﻿using log4net;
 using OpenQA.Selenium;
 using Tradeas.Models;
 
@@ -20,7 +18,7 @@ namespace Tradeas.Colfinancial.Provider.Navigators
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> Navigate()
+        public TaskResult Navigate()
         {
             //_webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
             

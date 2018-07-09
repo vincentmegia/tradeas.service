@@ -22,7 +22,7 @@ namespace Tradeas.Colfinancial.Provider.Simulators
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> Simulate(string symbol)
+        public TaskResult Simulate(string symbol)
         {
             var input = _webDriver.FindElement(By.Id(Constants.InputId));
             input.Clear();
@@ -30,7 +30,7 @@ namespace Tradeas.Colfinancial.Provider.Simulators
 
             Logger.Info($"setting stock name: {symbol} success");
 
-            var today = DateTime.Now.AddMonths(-2).ToString("yyyy/MM/dd");
+            /*var today = DateTime.Now.AddMonths(-2).ToString("yyyy/MM/dd");
             var javaScriptExecutor = (IJavaScriptExecutor) _webDriver;
             var script =
                 $"var dateFromDropdown=document.getElementsByName('cbDateFrom')[0];var option=document.createElement('option');option.text='{today}';option.value='{today}';dateFromDropdown.add(option);";
@@ -38,16 +38,13 @@ namespace Tradeas.Colfinancial.Provider.Simulators
 
             var dateFromSelect = new SelectElement(_webDriver.FindElement(By.Name(Constants.DateFromSelectName)));
             dateFromSelect.SelectByValue(today);
-            Logger.Info($"setting date from value success");
+            Logger.Info($"setting date from value success");*/
 
             _webDriver.FindElement(By.Id("bsubmit")).Submit();
             Logger.Info($"setting date to value success");
 
             _webDriver.SwitchTo().ParentFrame();
             _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Name("brokertrxnout2")));
-
-            //Logger.Info("sleeping for 1mins to wait result of broker transaction query.");
-            //Thread.Sleep(TimeSpan.FromMinutes(1));
             Logger.Info("awoken from sleep.");
 
             return new TaskResult {IsSuccessful = true};

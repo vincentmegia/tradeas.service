@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using log4net;
 using OpenQA.Selenium;
 using Tradeas.Models;
@@ -21,16 +20,16 @@ namespace Tradeas.Colfinancial.Provider.Navigators
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> Navigate()
+        public TaskResult Navigate()
         {
-            return await Navigate(false);
+            return Navigate(false);
         }
         
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> Navigate(bool byPassQuoteTab)
+        public TaskResult Navigate(bool byPassQuoteTab)
         {
             _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Id(Constants.HeaderFrameId)));
             if (!byPassQuoteTab) _webDriver.FindElement(By.CssSelector(Constants.QuoteTabSelector)).Click();
@@ -52,7 +51,7 @@ namespace Tradeas.Colfinancial.Provider.Navigators
         /// Returns to 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> NavigateHeaderFrame()
+        public TaskResult NavigateHeaderFrame()
         {
             _webDriver.SwitchTo().ParentFrame();
             _webDriver.SwitchTo().ParentFrame();

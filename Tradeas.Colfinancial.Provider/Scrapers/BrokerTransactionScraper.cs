@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
-using log4net.Core;
 using OpenQA.Selenium;
 using Tradeas.Colfinancial.Provider.Builders;
+using Tradeas.Colfinancial.Provider.Exceptions;
 using Tradeas.Colfinancial.Provider.Navigators;
 using Tradeas.Colfinancial.Provider.Processors;
 using Tradeas.Colfinancial.Provider.Simulators;
@@ -23,27 +23,45 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionScraper));
         private readonly IImportRepository _importRepository;
         private readonly IImportTrackerRepository _importTrackerRepository;
+        private readonly IImportHistoryRepository _importHistoryRepository;
         private readonly IBrokerTransactionRepository _brokerTransactionRepository;
 
         public BrokerTransactionScraper(IImportRepository importRepository,
                                         IBrokerTransactionRepository brokerTransactionRepository,
-                                        IImportTrackerRepository importTrackerRepository)
+                                        IImportTrackerRepository importTrackerRepository,
+                                        IImportHistoryRepository importHistoryRepository)
         {
             _importRepository = importRepository;
             _brokerTransactionRepository = brokerTransactionRepository;
             _importTrackerRepository = importTrackerRepository;
+            _importHistoryRepository = importHistoryRepository;
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> Scrape(TransactionParameter transactionParameter)
+        public TaskResult Scrape(TransactionParameter transactionParameter)
         {
             //design, keep creating new instances to avoid threading issue
             //leter consider using actor based threads
-            var importsResponse = await _importRepository.GetAll();
+            var importsHistoryResponse = _importHistoryRepository.GetByDate(DateTime.Now);
+            var importsHistory = importsHistoryResponse.GetData<ImportHistory>();
+            if (importsHistory == null)
+            {
+                var importTrackersResponse = _importTrackerRepository.GetAll();
+                var importTrackers = importTrackersResponse.GetData<List<ImportTracker>>();
+                foreach (var importTracker in importTrackers)
+                {
+                    _importTrackerRepository.DeleteAsync(importTracker);
+                }
+            }
+            _importHistoryRepository.Add(new ImportHistory("broker-transactions", "broker.service"));
+            
+            
+            var importsResponse = _importRepository.GetAll();
             var imports = importsResponse
+                .Result
                 .GetData<List<Import>>()
                 .OrderBy(i => i.Symbol);
 
@@ -52,6 +70,8 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
             var batchSize = imports.Count() / workerCount;
             var skipCounter = 0;
             var tasks = new List<Task>();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
             for (var index = 0; index <= workerCount; index++)
             {
                 var batch = imports
@@ -70,10 +90,10 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
 
                 var task = Task
                     .Factory
-                    .StartNew(() => Process(transactionParameter, batch, webDrivers))
-                    .Unwrap();
+                    .StartNew(() => Process(transactionParameter, batch, webDrivers), cancellationToken);
                 var symbols = string.Join(",", batch.Select(b => b.Symbol));
                 Logger.Info($"Thread id: {task.Id} will processing the following symbols: {symbols}");
+                LogicalThreadContext.Properties["thread-id"] = task.Id;
                 tasks.Add(task);
             }
 
@@ -93,12 +113,12 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
             webDrivers.Add(WebDriverFactory.Create());
             var retryTask = Task
                 .Factory
-                .StartNew(() => Process(transactionParameter, items, webDrivers))
-                .Unwrap();
+                .StartNew(() => Process(transactionParameter, items, webDrivers));
             Task.WaitAll(retryTask);
             Logger.Info("processing retry items  completed.");
             Logger.Info("broker transaction processing completed.");
             
+            Logger.Info("Adding tracking to import history");
             return new TaskResult {IsSuccessful = true};
         }
 
@@ -109,22 +129,24 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
         /// <param name="batch"></param>
         /// <param name="webDrivers"></param>
         /// <returns></returns>
-        private async Task Process(TransactionParameter transactionParameter, List<Import> batch, List<IWebDriver> webDrivers)
+        private TaskResult Process(TransactionParameter transactionParameter, 
+                                   List<Import> batch, 
+                                   List<IWebDriver> webDrivers)
         {
             var webDriver = WebDriverFactory.Create();
             
             try
             {
                 var loginNavigator = new LoginNavigator(webDriver);
-                var loginNavigateResult = await loginNavigator.Navigate();
+                var loginNavigateResult = loginNavigator.Navigate();
 
                 var loginSimulator = new LoginSimulator(webDriver, transactionParameter);
-                var loginSimulateResult = await loginSimulator.Simulate();
+                var loginSimulateResult = loginSimulator.Simulate();
 
                 Logger.Info("initiating broker navigator");
                 var brokerTabNavigator = new BrokerTabNavigator(webDriver);
                 Logger.Info("broker navigation in progress");
-                var tabNavigatorResult = await brokerTabNavigator.Navigate();
+                var tabNavigatorResult = brokerTabNavigator.Navigate();
                 Logger.Info("initiating table scraper");
                 var brokerTableScraper = new BrokerTableScraper(batch.ToList(),
                     new BrokerTransactionBuilder(),
@@ -133,14 +155,17 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                     brokerTabNavigator,
                     webDriver,
                     _importTrackerRepository);
-                var tableScraper = await brokerTableScraper.Scrape();
+                var tableScraper = brokerTableScraper.Scrape();
             }
             catch (Exception e)
             {
                 Logger.Error(e);
+                if (e.Message.Contains("Back-office is currently updating"))
+                    throw new BackOfficeOfflineException("back office exception detected", e);
                 //throw;
             }
             webDrivers.Add(webDriver);
+            return new TaskResult {IsSuccessful = true};
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Tradeas.Colfinancial.Provider.Scrapers;
 using Tradeas.Models;
 using Tradeas.Repositories;
 
@@ -26,7 +24,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// </summary>
         /// <returns>The process.</returns>
         /// <param name="brokerTransactions">T.</param>
-        public async Task<Result> Process(List<BrokerTransaction> brokerTransactions)
+        public TaskResult Process(List<BrokerTransaction> brokerTransactions)
         {
             //collect new created transactions
             var jsonList = new List<string>();
@@ -37,8 +35,9 @@ namespace Tradeas.Colfinancial.Provider.Processors
                 jsonList.Add(json);
             }
 
-            await _brokerTransactionRepository.BulkAsync(jsonList);
-            var taskResult = new TaskResult { IsSuccessful = true }.SetData(brokerTransactions);
+            _brokerTransactionRepository.BulkAsync(jsonList);
+            var taskResult = new TaskResult { IsSuccessful = true };
+            taskResult.SetData(brokerTransactions);
             return taskResult;
         }
 
@@ -47,7 +46,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// </summary>
         /// <returns>The process.</returns>
         /// <param name="t">T.</param>
-        public async Task<Result> Process(Transaction t)
+        public Task<Result> Process(Transaction t)
         {
             throw new System.NotImplementedException();
         }

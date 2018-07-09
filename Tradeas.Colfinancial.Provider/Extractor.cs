@@ -30,12 +30,12 @@ namespace Tradeas.Colfinancial.Provider
         /// <summary>
         /// Scrap this instance.
         /// </summary>
-        public async Task<Result> Extract(TransactionParameter transactionParameter)
+        public TaskResult Extract(TransactionParameter transactionParameter)
         {
             Logger.Info("initiating extraction");
             //var transactionScraperResult = await _transactionScraper.Scrape(_webDriver);
             //var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
-            var result = await _brokerTransactionScraper.Scrape(transactionParameter);
+            var result = _brokerTransactionScraper.Scrape(transactionParameter);
             
             try
             {

@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
 using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
     public interface IImportHistoryRepository
     {
-        Task<Result> BulkAsync(List<string> brokerTransactions);
+        TaskResult GetByDate(DateTime date);
+        TaskResult Add(ImportHistory importHistory);
     }
 }
