@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using log4net;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -24,7 +23,7 @@ namespace Tradeas.Colfinancial.Provider.Simulators
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result> Simulate()
+        public TaskResult Simulate()
         {
             var usernameTokens = _transactionParameter
                 .LoginCredential

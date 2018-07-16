@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using System;
 using log4net;
+using Tradeas.Colfinancial.Provider.Actors;
 using Tradeas.Colfinancial.Provider.Scrapers;
 using Tradeas.Models;
 
@@ -12,19 +13,15 @@ namespace Tradeas.Colfinancial.Provider
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Extractor));
         private readonly ITransactionScraper _transactionScraper;
         private readonly IPortfolioScraper _portfolioScraper;
-        private readonly BrokerTransactionScraper _brokerTransactionScraper;
-
-        
-        
-        
+        private readonly BrokerActor _brokerActor;
             
         public Extractor(ITransactionScraper transactionScraper,
                          IPortfolioScraper portfolioScraper,
-                         BrokerTransactionScraper brokerTransactionScraper)
+                         BrokerActor brokerActor)
         {
             _transactionScraper = transactionScraper;
             _portfolioScraper = portfolioScraper;
-            _brokerTransactionScraper = brokerTransactionScraper;
+            _brokerActor = brokerActor;
         }
 
         /// <summary>
@@ -35,7 +32,7 @@ namespace Tradeas.Colfinancial.Provider
             Logger.Info("initiating extraction");
             //var transactionScraperResult = await _transactionScraper.Scrape(_webDriver);
             //var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
-            var result = _brokerTransactionScraper.Scrape(transactionParameter);
+            var result = _brokerActor.Do(transactionParameter);
             
             try
             {

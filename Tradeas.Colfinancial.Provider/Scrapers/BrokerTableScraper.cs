@@ -20,28 +20,27 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
         private readonly IWebDriver _webDriver;
         private readonly List<Import> _imports;
 
-        private readonly IImportTrackerRepository _importTrackerRepository; //consider if repository layer is correct in this layer
-
         private readonly BrokerTransactionBuilder _brokerTransactionBuilder;
         private readonly BrokerTransactionProcessor _brokerTransactionProcessor;
         private readonly BrokerTransactionSimulator _brokerTransactionSimulator;
         private readonly BrokerTabNavigator _brokerTabNavigator;
+        private readonly ImportProcessor _importProcessor;
 
         public BrokerTableScraper(List<Import> imports,
                                   BrokerTransactionBuilder brokerTransactionBuilder,
                                   BrokerTransactionProcessor brokerTransactionProcessor,
                                   BrokerTransactionSimulator brokerTransactionSimulator,
                                   BrokerTabNavigator brokerTabNavigator,
-                                  IWebDriver webDriver,
-                                  IImportTrackerRepository importTrackerRepository)
+                                  ImportProcessor importProcessor,
+                                  IWebDriver webDriver)
         {
             _webDriver = webDriver;
             _imports = imports;
-            _importTrackerRepository = importTrackerRepository;
             _brokerTransactionBuilder = brokerTransactionBuilder;
             _brokerTransactionProcessor = brokerTransactionProcessor;
             _brokerTransactionSimulator = brokerTransactionSimulator;
             _brokerTabNavigator = brokerTabNavigator;
+            _importProcessor = importProcessor;
         }
 
         /// <summary>
@@ -56,19 +55,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                 counter++;
                 Logger.Info($"processing {counter} out of {_imports.Count}");
                 LogicalThreadContext.Properties["symbol"] = import.Symbol;
-                var importTrackerResponse = _importTrackerRepository.GetAll();
-                var exportedList = importTrackerResponse
-                    .GetData<List<ImportTracker>>()
-                    .Where(x => x.Status != "Retry");
-
-                Logger.Info($"processing symbol: {import.Symbol}");
                 var importTracker = new ImportTracker(import.Symbol);
-
-                if (exportedList.Contains(importTracker))
-                {
-                    Logger.Info($"already been processed. skipping");
-                    continue;
-                }
 
                 try
                 {
@@ -107,14 +94,13 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                 catch (Exception e)
                 {
                     Logger.Warn($"An issue trying to download broker transactions found, adding to retry queue for later processing", e);
-                    DeadQueue.Add(import);
                     importTracker.Status = "Retry";
                 }
                 
                 //switch back to main frame to prevent
                 _brokerTabNavigator.NavigateHeaderFrame();
                 _brokerTabNavigator.Navigate(true);
-                _importTrackerRepository.PostAsync(importTracker);
+                _importProcessor.AddTracker(importTracker);
             }
 
             Logger.Info($"broker table scraping completed.");
