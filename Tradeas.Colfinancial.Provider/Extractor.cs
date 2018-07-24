@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using OpenQA.Selenium;
-using System;
+﻿using System;
 using log4net;
 using Tradeas.Colfinancial.Provider.Actors;
 using Tradeas.Colfinancial.Provider.Scrapers;
@@ -32,28 +30,24 @@ namespace Tradeas.Colfinancial.Provider
             Logger.Info("initiating extraction");
             //var transactionScraperResult = await _transactionScraper.Scrape(_webDriver);
             //var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
-            var result = _brokerActor.Do(transactionParameter);
-            
             try
             {
-                return new TaskResult
-                {
+                var result = _brokerActor.Do(transactionParameter);
+                return result;
+                /*{
                     IsSuccessful = //transactionScraperResult.IsSuccessful.Value &&
                         //portfolioScraperResult.IsSuccessful.Value
                         //brokerTransactionScraper.IsSuccessful
                         true
-                };
+                };*/
             }
             catch (Exception e)
             {
                 Logger.Error(e);
                 throw;
             }
-            finally
-            {
 
-            }
-
+            Logger.Info("task completed");
             return new TaskResult {IsSuccessful = true};
         }
     }

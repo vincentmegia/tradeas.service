@@ -35,7 +35,8 @@ namespace Tradeas.Service.Api
                     .AddJsonOptions(options => options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ");
 
             //var couchdbUrl = "http://127.0.0.1:5984";
-            var couchdbUrl = "http://104.215.158.74:5984/";
+            //var couchdbUrl = "http://104.215.158.74:5984/";
+            var couchdbUrl = Configuration["CouchDb:Url"];
             services
                 .AddTransient<IJournalBuilder, JournalBuilder>()
                 .AddTransient<ITransactionScraper, TradeTransactionScraper>()
