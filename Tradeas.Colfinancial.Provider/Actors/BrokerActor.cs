@@ -50,9 +50,12 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 var imports = _importProcessor
                     .Process()
                     .GetData<List<Import>>();
+                Logger.Info($"imports count {imports.Count}");
                 var workerCount = Convert.ToInt32(_configuration["WorkerCount"]);
+                Logger.Info($"setting worker count {workerCount}");
                 var webDrivers = new List<IWebDriver>();
                 var batchSize = imports.Count / workerCount;
+                Logger.Info($"batch size per worker {batchSize}");
                 if (batchSize == 0) batchSize = imports.Count;
                 var skipCounter = 0;
                 var tasks = new List<Task>();
