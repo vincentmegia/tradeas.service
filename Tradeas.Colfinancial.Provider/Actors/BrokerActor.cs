@@ -73,7 +73,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
                         Thread.Sleep(TimeSpan.FromSeconds(30));
                     }
 
-                    var webDriver = WebDriverFactory.Create();
+                    var webDriver = WebDriverFactory.Create(_configuration);
                     var task = Task
                         .Factory
                         .StartNew(() => _brokerTransactionScraper.Scrape(transactionParameter, batch, webDriver),cancellationToken);
