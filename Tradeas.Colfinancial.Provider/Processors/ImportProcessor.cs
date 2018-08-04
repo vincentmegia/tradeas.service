@@ -29,7 +29,6 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// <returns></returns>
         public TaskResult Process()
         {
-            PurgeTrackers();
             _importHistoryRepository.Add(new ImportHistory("broker-transactions", "broker.service"));
 
             var importTrackers = _importTrackerRepository
@@ -53,7 +52,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// <summary>
         /// 
         /// </summary>
-        private void PurgeTrackers()
+        public void PurgeTrackers()
         {
             var importsHistory = _importHistoryRepository
                 .GetByDate(DateTime.Now)

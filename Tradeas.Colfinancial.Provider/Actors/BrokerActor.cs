@@ -20,15 +20,21 @@ namespace Tradeas.Colfinancial.Provider.Actors
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerActor));
         private readonly ImportProcessor _importProcessor;
         private readonly BrokerTransactionScraper _brokerTransactionScraper;
+        private readonly BatchProcessor _batchProcessor;
+        private readonly TaskProcessor _taskProcessor;
         private readonly IConfiguration _configuration;
         
         public BrokerActor(ImportProcessor importProcessor,
                            BrokerTransactionScraper brokerTransactionScraper,
+                           BatchProcessor batchProcessor,
+                           TaskProcessor taskProcessor,
                            IConfiguration configuration)
         {
             _importProcessor = importProcessor;
             _brokerTransactionScraper = brokerTransactionScraper;
             _configuration = configuration;
+            _batchProcessor = batchProcessor;
+            _taskProcessor = taskProcessor;
         }
 
         /// <summary>
@@ -38,37 +44,30 @@ namespace Tradeas.Colfinancial.Provider.Actors
         public TaskResult Do(TransactionParameter transactionParameter)
         {
             var isBackOfficeException = false;
+            var sleepInterval = 5;
+            _importProcessor.PurgeTrackers();
             while (true)
             {
                 if (isBackOfficeException)
                 {
-                    Logger.Info("Performing sleep for mins");
-                    Thread.Sleep(TimeSpan.FromMinutes(1));
+                    Logger.Info($"Performing sleep for {sleepInterval} minutes");
+                    Thread.Sleep(TimeSpan.FromMinutes(sleepInterval));
+                    sleepInterval *= 2;
                     Logger.Info("awoken from sleep");
                 }
-                    
-                var imports = _importProcessor
-                    .Process()
-                    .GetData<List<Import>>();
-                Logger.Info($"imports count {imports.Count}");
+
                 var workerCount = Convert.ToInt32(_configuration["WorkerCount"]);
                 Logger.Info($"setting worker count {workerCount}");
+
                 var webDrivers = new List<IWebDriver>();
-                var batchSize = imports.Count / workerCount;
-                Logger.Info($"batch size per worker {batchSize}");
-                if (batchSize == 0) batchSize = imports.Count;
-                var skipCounter = 0;
                 var tasks = new List<Task>();
                 var cancellationTokenSource = new CancellationTokenSource();
                 var cancellationToken = cancellationTokenSource.Token;
                 for (var index = 0; index <= workerCount; index++)
                 {
-                    var batch = imports
-                        .Skip(skipCounter)
-                        .Take(batchSize)
-                        .ToList();
-                    skipCounter += batchSize;
-
+                    var batch = _batchProcessor
+                                    .Process()
+                                    .GetData<List<Import>>();
                     if (batch.Count == 0) continue;
                     if (index > 0)
                     {
@@ -88,25 +87,9 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 }
 
                 Logger.Info($"waiting for all complete, thread count: {tasks.Count}");
-                
-                try
-                {
-                    Task.WaitAll(tasks.ToArray());
-                }
-                catch (AggregateException ae)
-                {
-                    ae.Handle(x =>
-                    {
-                        if (x is BackOfficeOfflineException)
-                        {
-                            Logger.Error("Detected that backoffice is updating, cancelling all threads.");
-                            cancellationTokenSource.Cancel();
-                            isBackOfficeException = true;
-                            return true;
-                        }
-                        return false;
-                    });
-                }
+                isBackOfficeException = _taskProcessor
+                    .Process(tasks, cancellationTokenSource)
+                    .IsSuccessful.Value;
                 
                 Logger.Info("performing webdriver cleanup");
                 foreach (var webDriver in webDrivers)

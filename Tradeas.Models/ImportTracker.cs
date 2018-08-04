@@ -26,7 +26,7 @@ namespace Tradeas.Models
         
         public ImportTracker(string symbol)
         {
-            Id = $"{symbol}-{DateTime.Now:yyyyMMMyy}";
+            Id = $"{symbol}-{DateTime.Now:yyyyMMMdd}";
             Symbol = symbol;
         }
         

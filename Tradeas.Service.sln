@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Service.Api", "Transaction.Service\Tradeas.Service.Api.csproj", "{DB93F624-70A4-4CCC-9C2E-7A931EB65226}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Colfinancial.Provider", "Tradeas.Colfinancial.Provider\Tradeas.Colfinancial.Provider.csproj", "{592224A3-8370-426C-BF5B-13B497653805}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Models", "Tradeas.Models\Tradeas.Models.csproj", "{0F54A91B-A575-4D66-A186-EF68C1CD3642}"
@@ -12,6 +10,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Repositories.Tests", "Tradeas.Repositories.Tests\Tradeas.Repositories.Tests.csproj", "{5AE842D9-5683-4D83-9F4B-22A71983B780}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Strategies", "Tradeas.Strategies\Tradeas.Strategies.csproj", "{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Web.Api", "Tradeas.Web.Api\Tradeas.Web.Api.csproj", "{8206C557-BF77-456C-AAF3-90B58492C524}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Security", "Tradeas.Security\Tradeas.Security.csproj", "{CEFC109A-45B9-4806-8D75-4682E901D2CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Security.Tests", "Tradeas.Security.Tests\Tradeas.Security.Tests.csproj", "{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +27,6 @@ Global
 		{509D5D2F-223D-45FD-AA64-6526B65BF820}.Debug|x86.Build.0 = Debug|Any CPU
 		{509D5D2F-223D-45FD-AA64-6526B65BF820}.Release|x86.ActiveCfg = Release|Any CPU
 		{509D5D2F-223D-45FD-AA64-6526B65BF820}.Release|x86.Build.0 = Release|Any CPU
-		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Debug|x86.Build.0 = Debug|Any CPU
-		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Release|x86.ActiveCfg = Release|Any CPU
-		{DB93F624-70A4-4CCC-9C2E-7A931EB65226}.Release|x86.Build.0 = Release|Any CPU
 		{592224A3-8370-426C-BF5B-13B497653805}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{592224A3-8370-426C-BF5B-13B497653805}.Debug|x86.Build.0 = Debug|Any CPU
 		{592224A3-8370-426C-BF5B-13B497653805}.Release|x86.ActiveCfg = Release|Any CPU
@@ -47,5 +47,17 @@ Global
 		{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}.Debug|x86.Build.0 = Debug|Any CPU
 		{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}.Release|x86.ActiveCfg = Release|Any CPU
 		{DB8FDFCB-AEA6-41D6-BC97-CFCA781E4262}.Release|x86.Build.0 = Release|Any CPU
+		{8206C557-BF77-456C-AAF3-90B58492C524}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8206C557-BF77-456C-AAF3-90B58492C524}.Debug|x86.Build.0 = Debug|Any CPU
+		{8206C557-BF77-456C-AAF3-90B58492C524}.Release|x86.ActiveCfg = Release|Any CPU
+		{8206C557-BF77-456C-AAF3-90B58492C524}.Release|x86.Build.0 = Release|Any CPU
+		{CEFC109A-45B9-4806-8D75-4682E901D2CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CEFC109A-45B9-4806-8D75-4682E901D2CC}.Debug|x86.Build.0 = Debug|Any CPU
+		{CEFC109A-45B9-4806-8D75-4682E901D2CC}.Release|x86.ActiveCfg = Release|Any CPU
+		{CEFC109A-45B9-4806-8D75-4682E901D2CC}.Release|x86.Build.0 = Release|Any CPU
+		{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}.Debug|x86.Build.0 = Debug|Any CPU
+		{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
