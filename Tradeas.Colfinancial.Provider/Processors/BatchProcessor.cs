@@ -13,7 +13,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         private readonly IConfiguration _configuration;
         private readonly ImportProcessor _importProcessor;
         private int _skipCounter;
-        
+        private List<Import> _imports;
 
         public BatchProcessor(IConfiguration configuration,
                               ImportProcessor importProcessor)
@@ -28,20 +28,19 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// <returns></returns>
         public TaskResult Process()
         {
-            var imports = _importProcessor
+            if (_imports ==null) _imports = _importProcessor
                 .Process()
                 .GetData<List<Import>>();
-            Logger.Info($"imports count {imports.Count}");
+            Logger.Info($"imports count {_imports.Count}");
 
             var workerCount = Convert.ToInt32(_configuration["WorkerCount"]);
             Logger.Info($"setting worker count {workerCount}");
             
-            var batchSize = imports.Count / workerCount;
+            var batchSize = _imports.Count / workerCount;
             Logger.Info($"batch size per worker {batchSize}");
-            if (batchSize == 0) batchSize = imports.Count;
-            var skipCounter = 0;
-            var batch = imports
-                .Skip(skipCounter)
+            if (batchSize == 0) batchSize = _imports.Count;
+            var batch = _imports
+                .Skip(_skipCounter)
                 .Take(batchSize)
                 .ToList();
             _skipCounter += batchSize;
