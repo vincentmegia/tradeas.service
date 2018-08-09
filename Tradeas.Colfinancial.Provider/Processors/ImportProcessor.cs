@@ -52,12 +52,12 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// <summary>
         /// 
         /// </summary>
-        public void PurgeTrackers()
+        public void PurgeTrackers(TransactionParameter transactionParameter)
         {
             var importsHistory = _importHistoryRepository
                 .GetByDate(DateTime.Now)
                 .GetData<ImportHistory>();
-            if (importsHistory == null)
+            if (importsHistory == null || (transactionParameter.FromDate != null && transactionParameter.ToDate != null))
             {
                 var importTrackersResponse = _importTrackerRepository.GetAll();
                 var importTrackers = importTrackersResponse.GetData<List<ImportTracker>>();

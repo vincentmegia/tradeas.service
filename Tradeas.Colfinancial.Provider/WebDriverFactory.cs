@@ -17,7 +17,7 @@ namespace Tradeas.Colfinancial.Provider
         public static IWebDriver Create(IConfiguration configuration)
         {
             var options = new ChromeOptions();
-            options.AddArgument("--headless");
+            //options.AddArgument("headless");
             options.AddArgument("no-sandbox");
             switch (Environment.OSVersion.Platform)
             {

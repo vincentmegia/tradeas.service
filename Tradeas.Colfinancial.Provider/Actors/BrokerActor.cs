@@ -45,7 +45,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
         {
             var isBackOfficeException = false;
             var sleepInterval = 5;
-            _importProcessor.PurgeTrackers();
+            _importProcessor.PurgeTrackers(transactionParameter);
             while (true)
             {
                 if (isBackOfficeException)

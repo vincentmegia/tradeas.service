@@ -1,20 +1,22 @@
-﻿namespace Tradeas.Models
+﻿using System;
+
+namespace Tradeas.Models
 {
     public class TransactionParameter
     {
         public Credential LoginCredential { get; set; }
         public string Frequency { get; set; }
-
-        public TransactionParameter()
-        {}
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+        public string Symbol { get; set; }
 
         /// <summary>
-        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Tradeas.Models.TransactionParameter"/>.
+        /// 
         /// </summary>
-        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Tradeas.Models.TransactionParameter"/>.</returns>
+        /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[TransactionParameter: LoginCredential={0}, Frequency={1}]", LoginCredential, Frequency);
+            return $"{nameof(LoginCredential)}: {LoginCredential}, {nameof(Frequency)}: {Frequency}, {nameof(FromDate)}: {FromDate}, {nameof(ToDate)}: {ToDate}";
         }
     }
 }

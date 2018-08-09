@@ -21,17 +21,23 @@ namespace Tradeas.Colfinancial.Provider.Builders
             Transactions = new List<BrokerTransaction>();
         }
 
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="rows"></param>
-        /// <param name="symbol"></param>
+        /// <param name="transactionParameter"></param>
         /// <returns></returns>
-        public BrokerTransactionBuilder Build(List<IWebElement> rows, string symbol)
+        public BrokerTransactionBuilder Build(List<IWebElement> rows,  
+            TransactionParameter transactionParameter)
         {
+            var date = transactionParameter.FromDate == null
+                ? new DateTime?()
+                : Convert.ToDateTime(transactionParameter.FromDate);
+            var symbol = transactionParameter.Symbol;
             var brokerTransaction = new BrokerTransaction
             {
-                Id = $"{symbol}-{DateTime.Now:yyyyMMMdd}",
+                Id = $"{symbol}-{date:yyyyMMMdd}",
                 Symbol = symbol
             };
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using log4net;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -47,7 +48,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
         /// 
         /// </summary>
         /// <returns></returns>
-        public TaskResult Scrape()
+        public TaskResult Scrape(TransactionParameter transactionParameter)
         {
             var counter = 0;
             foreach (var import in _imports)
@@ -59,7 +60,8 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
 
                 try
                 {
-                    var transactionSimulatorResult = _brokerTransactionSimulator.Simulate(import.Symbol);
+                    transactionParameter.Symbol = import.Symbol;
+                    _brokerTransactionSimulator.Simulate(transactionParameter);
 
                     var fluentWait = new DefaultWait<IWebDriver>(_webDriver)
                     {
@@ -73,7 +75,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                     if (rows.Count > 0)
                     {
                         Logger.Info("initiating transaction builder");
-                        var brokerTransactions = _brokerTransactionBuilder.Build(rows.ToList(), import.Symbol);
+                        var brokerTransactions = _brokerTransactionBuilder.Build(rows.ToList(), transactionParameter);
                         Logger.Info("initiating transaction process");
                         _brokerTransactionProcessor.Process(brokerTransactions);
                         _brokerTransactionBuilder.Transactions.Clear();
@@ -86,10 +88,6 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                         importTracker.Status = "None";
                         Logger.Info($"no broker transactions found");
                     }
-                }
-                catch (BackOfficeOfflineException be)
-                {
-                    
                 }
                 catch (Exception e)
                 {

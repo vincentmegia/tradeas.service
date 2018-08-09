@@ -58,7 +58,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                     brokerTabNavigator,
                     _importProcessor,
                     webDriver);
-                brokerTableScraper.Scrape();
+                brokerTableScraper.Scrape(transactionParameter);
             }
             catch (Exception e)
             {

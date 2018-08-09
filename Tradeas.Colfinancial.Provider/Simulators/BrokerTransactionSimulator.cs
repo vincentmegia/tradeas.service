@@ -21,9 +21,13 @@ namespace Tradeas.Colfinancial.Provider.Simulators
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="transactionParameter"></param>
         /// <returns></returns>
-        public TaskResult Simulate(string symbol)
+        public TaskResult Simulate(TransactionParameter transactionParameter)
         {
+            var symbol = transactionParameter.Symbol;
+            var from = transactionParameter.FromDate;
+            var to = transactionParameter.ToDate;
             var input = _webDriver.FindElement(By.Id(Constants.InputId));
             input.Clear();
             input.SendKeys(symbol);
@@ -40,13 +44,24 @@ namespace Tradeas.Colfinancial.Provider.Simulators
             dateFromSelect.SelectByValue(today);
             Logger.Info($"setting date from value success");*/
 
+            if (from != null)
+            {
+                var dateFromSelect = new SelectElement(_webDriver.FindElement(By.Name(Constants.DateFromSelectName)));
+                dateFromSelect.SelectByValue(from.Value.ToString("yyyy/MM/dd"));    
+            }
+
+            if (to != null)
+            {
+                var dateToSelect = new SelectElement(_webDriver.FindElement(By.Name(Constants.DateToSelectName)));
+                dateToSelect.SelectByValue(to.Value.ToString("yyyy/MM/dd"));
+            }
+            
             _webDriver.FindElement(By.Id("bsubmit")).Submit();
             Logger.Info($"setting date to value success");
 
             _webDriver.SwitchTo().ParentFrame();
             _webDriver.SwitchTo().Frame(_webDriver.FindElement(By.Name("brokertrxnout2")));
             Logger.Info("awoken from sleep.");
-
             return new TaskResult {IsSuccessful = true};
         }
     }
