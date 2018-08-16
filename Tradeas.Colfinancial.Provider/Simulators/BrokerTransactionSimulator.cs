@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using log4net;
+﻿using log4net;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Tradeas.Models;
@@ -26,35 +23,19 @@ namespace Tradeas.Colfinancial.Provider.Simulators
         public TaskResult Simulate(TransactionParameter transactionParameter)
         {
             var symbol = transactionParameter.Symbol;
-            var from = transactionParameter.FromDate;
-            var to = transactionParameter.ToDate;
+            var from = transactionParameter.GetFromDate();
+            var to = transactionParameter.GetToDate();
             var input = _webDriver.FindElement(By.Id(Constants.InputId));
             input.Clear();
             input.SendKeys(symbol);
 
             Logger.Info($"setting stock name: {symbol} success");
 
-            /*var today = DateTime.Now.AddMonths(-2).ToString("yyyy/MM/dd");
-            var javaScriptExecutor = (IJavaScriptExecutor) _webDriver;
-            var script =
-                $"var dateFromDropdown=document.getElementsByName('cbDateFrom')[0];var option=document.createElement('option');option.text='{today}';option.value='{today}';dateFromDropdown.add(option);";
-            javaScriptExecutor.ExecuteScript(script);
-
             var dateFromSelect = new SelectElement(_webDriver.FindElement(By.Name(Constants.DateFromSelectName)));
-            dateFromSelect.SelectByValue(today);
-            Logger.Info($"setting date from value success");*/
+            dateFromSelect.SelectByValue(from.Value.ToString("yyyy/MM/dd"));    
 
-            if (from != null)
-            {
-                var dateFromSelect = new SelectElement(_webDriver.FindElement(By.Name(Constants.DateFromSelectName)));
-                dateFromSelect.SelectByValue(from.Value.ToString("yyyy/MM/dd"));    
-            }
-
-            if (to != null)
-            {
-                var dateToSelect = new SelectElement(_webDriver.FindElement(By.Name(Constants.DateToSelectName)));
-                dateToSelect.SelectByValue(to.Value.ToString("yyyy/MM/dd"));
-            }
+            var dateToSelect = new SelectElement(_webDriver.FindElement(By.Name(Constants.DateToSelectName)));
+            dateToSelect.SelectByValue(to.Value.ToString("yyyy/MM/dd"));
             
             _webDriver.FindElement(By.Id("bsubmit")).Submit();
             Logger.Info($"setting date to value success");

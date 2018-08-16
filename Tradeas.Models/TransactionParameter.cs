@@ -18,5 +18,23 @@ namespace Tradeas.Models
         {
             return $"{nameof(LoginCredential)}: {LoginCredential}, {nameof(Frequency)}: {Frequency}, {nameof(FromDate)}: {FromDate}, {nameof(ToDate)}: {ToDate}";
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public DateTime? GetFromDate()
+        {
+            return FromDate ?? DateTime.Now;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public DateTime? GetToDate()
+        {
+            return ToDate ?? DateTime.Now;
+        }
     }
 }

@@ -56,7 +56,8 @@ namespace Tradeas.Colfinancial.Provider.Actors
                     Logger.Info("awoken from sleep");
                 }
 
-                var workerCount = Convert.ToInt32(_configuration["WorkerCount"]);
+                var workerCount = (!string.IsNullOrEmpty(transactionParameter.Symbol))
+                    ? 1 : Convert.ToInt32(_configuration["WorkerCount"]);
                 Logger.Info($"setting worker count {workerCount}");
 
                 var webDrivers = new List<IWebDriver>();
@@ -65,9 +66,11 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 var cancellationToken = cancellationTokenSource.Token;
                 for (var index = 0; index <= workerCount; index++)
                 {
-                    var batch = _batchProcessor
-                                    .Process()
-                                    .GetData<List<Import>>();
+                    var batch = (!string.IsNullOrEmpty(transactionParameter.Symbol))
+                        ? new List<Import> {new Import {Symbol = transactionParameter.Symbol}}
+                        : _batchProcessor
+                            .Process()
+                            .GetData<List<Import>>();
                     if (batch.Count == 0) continue;
                     if (index > 0)
                     {
@@ -97,7 +100,14 @@ namespace Tradeas.Colfinancial.Provider.Actors
                     webDriver.Quit();
                     webDriver.Dispose();
                 }
+                
+                Logger.Info("performing task cleanup");
+                foreach (var task in tasks)
+                {
+                    task.Dispose();
+                }
 
+                if (transactionParameter.Frequency.Equals("daily", StringComparison.CurrentCultureIgnoreCase)) break;
                 var isCompleted = _importProcessor.IsCompleted();
                 if (isCompleted)
                     break;

@@ -31,9 +31,7 @@ namespace Tradeas.Colfinancial.Provider.Builders
         public BrokerTransactionBuilder Build(List<IWebElement> rows,  
             TransactionParameter transactionParameter)
         {
-            var date = transactionParameter.FromDate == null
-                ? new DateTime?()
-                : Convert.ToDateTime(transactionParameter.FromDate);
+            var date = transactionParameter.GetFromDate();
             var symbol = transactionParameter.Symbol;
             var brokerTransaction = new BrokerTransaction
             {

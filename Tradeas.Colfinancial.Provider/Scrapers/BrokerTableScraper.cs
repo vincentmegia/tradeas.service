@@ -60,8 +60,14 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
 
                 try
                 {
-                    transactionParameter.Symbol = import.Symbol;
-                    _brokerTransactionSimulator.Simulate(transactionParameter);
+                    //create new transaction parameter to avoid threading issues
+                    var parameter = new TransactionParameter
+                    {
+                        Symbol = import.Symbol,
+                        FromDate = transactionParameter.FromDate,
+                        ToDate = transactionParameter.ToDate
+                    };
+                    _brokerTransactionSimulator.Simulate(parameter);
 
                     var fluentWait = new DefaultWait<IWebDriver>(_webDriver)
                     {
@@ -75,7 +81,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                     if (rows.Count > 0)
                     {
                         Logger.Info("initiating transaction builder");
-                        var brokerTransactions = _brokerTransactionBuilder.Build(rows.ToList(), transactionParameter);
+                        var brokerTransactions = _brokerTransactionBuilder.Build(rows.ToList(), parameter);
                         Logger.Info("initiating transaction process");
                         _brokerTransactionProcessor.Process(brokerTransactions);
                         _brokerTransactionBuilder.Transactions.Clear();
