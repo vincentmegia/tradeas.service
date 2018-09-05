@@ -64,6 +64,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 var tasks = new List<Task>();
                 var cancellationTokenSource = new CancellationTokenSource();
                 var cancellationToken = cancellationTokenSource.Token;
+                _batchProcessor.SkipCounter = 0;
                 for (var index = 0; index <= workerCount; index++)
                 {
                     var batch = (!string.IsNullOrEmpty(transactionParameter.Symbol))
@@ -107,7 +108,6 @@ namespace Tradeas.Colfinancial.Provider.Actors
                     task.Dispose();
                 }
 
-                if (transactionParameter.Frequency.Equals("daily", StringComparison.CurrentCultureIgnoreCase)) break;
                 var isCompleted = _importProcessor.IsCompleted();
                 if (isCompleted)
                     break;

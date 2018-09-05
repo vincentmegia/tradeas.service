@@ -12,7 +12,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionProcessor));
         private readonly IConfiguration _configuration;
         private readonly ImportProcessor _importProcessor;
-        private int _skipCounter;
+        public int SkipCounter { get; set; }
         private List<Import> _imports;
 
         public BatchProcessor(IConfiguration configuration,
@@ -41,10 +41,10 @@ namespace Tradeas.Colfinancial.Provider.Processors
             Logger.Info($"batch size per worker {batchSize}");
             if (batchSize == 0) batchSize = _imports.Count;
             var batch = _imports
-                .Skip(_skipCounter)
+                .Skip(SkipCounter)
                 .Take(batchSize)
                 .ToList();
-            _skipCounter += batchSize;
+            SkipCounter += batchSize;
 
             var taskResult = new TaskResult {IsSuccessful = true};
             taskResult.SetData(batch);

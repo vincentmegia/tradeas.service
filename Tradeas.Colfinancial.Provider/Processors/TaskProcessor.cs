@@ -35,7 +35,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
                         cancellationTokenSource.Cancel();
                         return true;
                     }
-                    return false;
+                    return true;
                 });
             }
 

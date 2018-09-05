@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using log4net;
 using Tradeas.Models;
 using Tradeas.Repositories;
@@ -54,6 +55,8 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// </summary>
         public void PurgeTrackers(TransactionParameter transactionParameter)
         {
+            if (transactionParameter.NoPurge != null && transactionParameter.NoPurge.Value) return;
+            
             var importsHistory = _importHistoryRepository
                 .GetByDate(DateTime.Now)
                 .GetData<ImportHistory>();

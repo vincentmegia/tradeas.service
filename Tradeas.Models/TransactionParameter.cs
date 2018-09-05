@@ -9,6 +9,8 @@ namespace Tradeas.Models
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public string Symbol { get; set; }
+        public bool? NoPurge { get; set; }
+    
 
         /// <summary>
         /// 
