@@ -28,7 +28,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// <returns></returns>
         public TaskResult Process()
         {
-            if (_imports == null) 
+            //if (_imports == null) 
                 _imports = _importProcessor
                 .Process()
                 .GetData<List<Import>>();

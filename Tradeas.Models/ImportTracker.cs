@@ -1,10 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Tradeas.Models
 {
-    public class ImportTracker
+    public class ImportTracker : IEqualityComparer<ImportTracker>
     {
+        private sealed class SymbolEqualityComparer : IEqualityComparer<ImportTracker>
+        {
+            public bool Equals(ImportTracker x, ImportTracker y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return string.Equals(x.Symbol, y.Symbol);
+            }
+
+            public int GetHashCode(ImportTracker obj)
+            {
+                return (obj.Symbol != null ? obj.Symbol.GetHashCode() : 0);
+            }
+        }
+
+        public static IEqualityComparer<ImportTracker> SymbolComparer { get; } = new SymbolEqualityComparer();
+        public bool Equals(ImportTracker x, ImportTracker y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetHashCode(ImportTracker obj)
+        {
+            throw new NotImplementedException();
+        }
+
         [JsonProperty(PropertyName = "_id")]
         public string Id { get; set; }
         
@@ -35,6 +64,11 @@ namespace Tradeas.Models
             var target = (ImportTracker) obj;
             if (target.Symbol.Equals(this.Symbol, StringComparison.CurrentCultureIgnoreCase)) return true;
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Symbol.GetHashCode();
         }
 
         public override string ToString()

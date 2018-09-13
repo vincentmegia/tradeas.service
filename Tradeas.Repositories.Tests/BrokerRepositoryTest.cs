@@ -220,5 +220,14 @@ namespace Tradeas.Repositories.Tests
             
             Assert.IsTrue(true);
         }
+        
+        [Test]
+        public void ContainsTest()
+        {
+            var importTracker = new ImportTracker("asdf");
+            var list = new List<ImportTracker>() {new ImportTracker("adsf")};
+            if (list.Contains(importTracker)) 
+                Assert.IsTrue(true);
+        }
     }
 }
