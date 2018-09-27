@@ -16,7 +16,7 @@ namespace Tradeas.Models
         /// <returns></returns>
         public static Task<Result> Default()
         {
-            return new Task<Result>(() => { return new TaskResult {IsSuccessful = true}; });
+            return new Task<Result>(() => new TaskResult {IsSuccessful = true});
         }
     }
 }

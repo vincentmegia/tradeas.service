@@ -44,9 +44,7 @@ namespace Tradeas.Repositories
 
             var imports = response
                 .Rows
-                .Select(row =>
-                    (Import) JsonConvert.DeserializeObject(row.IncludedDoc,
-                        typeof(Import))) // iad to resort to this, freakin framework works finicky
+                .Select(row => row.Value) // iad to resort to this, freakin framework works finicky
                 .ToList();
 
             var result = new TaskResult

@@ -36,8 +36,17 @@ namespace Tradeas.Colfinancial.Provider.Processors
 
             var workerCount = Convert.ToInt32(_configuration["WorkerCount"]);
             Logger.Info($"setting worker count {workerCount}");
-            
-            var batchSize = _imports.Count / workerCount;
+
+            var batchSize = 0;
+            if (_imports.Count > workerCount && (_imports.Count <= workerCount * 2))
+            {
+                batchSize = _imports.Count;               
+            }
+            else
+            {
+                batchSize = _imports.Count / workerCount;
+            }
+
             Logger.Info($"batch size per worker {batchSize}");
             if (batchSize == 0) batchSize = _imports.Count;
             var batch = _imports

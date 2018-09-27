@@ -14,6 +14,7 @@ using Tradeas.Colfinancial.Provider.Simulators;
 using Tradeas.Repositories;
 using Tradeas.Web.Api.Builders;
 using Tradeas.Web.Api.Processors;
+using Tradeas.Web.Api.Services;
 
 namespace Tradeas.Web.Api
 {
@@ -65,7 +66,10 @@ namespace Tradeas.Web.Api
                 .AddTransient<ISecurityRepository>(factory => new SecurityRepository(couchdbUrl))
                 .AddTransient<IImportTrackerRepository>(factory => new ImportTrackerRepository(couchdbUrl))
                 .AddTransient<IImportHistoryRepository>(factory => new ImportHistoryRepository(couchdbUrl))
+                .AddTransient<IUserRepository>(factory => new UserRepository(couchdbUrl))
             
+                .AddTransient<IAuthenticationService, AuthenticationService>()
+                
                 .AddTransient(typeof(BrokerActor))
                 .AddTransient(typeof(BatchProcessor))
                 .AddTransient(typeof(TaskProcessor))

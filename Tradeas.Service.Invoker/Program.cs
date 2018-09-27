@@ -37,8 +37,8 @@ namespace Tradeas.Service.Invoker
                 Frequency = configuration["TransactionParameter:Frequency"],
                 LoginCredential = new TransactionParameter.Credential
                 {
-                    Username = configuration["TransactionParameter:LoginCredenital:Username"], 
-                    Password = configuration["TransactionParameter:LoginCredenital:Password"]
+                    Username = configuration["TransactionParameter:LoginCredential:Username"], 
+                    Password = configuration["TransactionParameter:LoginCredential:Password"]
                 }
             });
             Logger.Info("executing tradeas.service broker extract http post");

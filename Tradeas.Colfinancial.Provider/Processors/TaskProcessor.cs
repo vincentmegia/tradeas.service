@@ -21,6 +21,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// <returns></returns>
         public TaskResult Process(List<Task> tasks, CancellationTokenSource cancellationTokenSource)
         {
+            var isBackOfficeUpdating = false;
             try
             {
                 Task.WaitAll(tasks.ToArray());
@@ -33,13 +34,14 @@ namespace Tradeas.Colfinancial.Provider.Processors
                     {
                         Logger.Error("Detected that backoffice is updating, cancelling all threads.");
                         cancellationTokenSource.Cancel();
+                        isBackOfficeUpdating = true;
                         return true;
                     }
                     return true;
                 });
             }
 
-            return new TaskResult {IsSuccessful = true};
+            return new TaskResult {IsSuccessful = isBackOfficeUpdating};
         }
     }
 }

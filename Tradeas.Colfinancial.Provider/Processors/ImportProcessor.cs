@@ -41,24 +41,8 @@ namespace Tradeas.Colfinancial.Provider.Processors
                 .GetAll()
                 .Result
                 .GetData<List<Import>>()
-                .ToList()
-                .FindAll(import => !importTrackers.Contains(new ImportTracker(import.Symbol)));
-//                .Where(import =>
-//                {
-//                    var importTracker = new ImportTracker(import.Symbol);
-//                    return !importTrackers.Contains(importTracker);
-//                });
-
-                //.FindAll(import => !importTrackers.Contains(new ImportTracker(import.Symbol)));
-                //.OrderBy(i => i.Symbol);
-//                .Where(import =>
-//                {
-//                    var importTracker = new ImportTracker(import.Symbol);
-//                    return !importTrackers.Contains(importTracker);
-//                });
-//                var importsOrdered = imports.OrderBy(i => i.Symbol)
-//                .ToList();
-            
+                .ToList();
+            imports = imports.FindAll(import => !importTrackers.Contains(new ImportTracker(import.Symbol)));
            
             var taskResult = new TaskResult {IsSuccessful = true};
             taskResult.SetData(imports);
