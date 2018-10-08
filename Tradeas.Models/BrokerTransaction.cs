@@ -6,14 +6,17 @@ namespace Tradeas.Models
 {
     public class BrokerTransaction
     {
-        [JsonProperty(PropertyName = "_id")]
+        //[JsonProperty(PropertyName = "_id")]
         public string Id { get; set; }
+        
+        //[JsonProperty(PropertyName = "_rev")]
+        public string Rev { get; set; }
 
         [JsonProperty(PropertyName = "symbol")]
         public string Symbol { get; set; }
-        
+
         [JsonProperty(PropertyName = "createdDate")]
-        public DateTime? CreatedDate => DateTime.Now;
+        public DateTime? CreatedDate { get; set; }
 
         [JsonProperty(PropertyName = "updatedDate")]
         public DateTime? UpdatedDate { get; set; }

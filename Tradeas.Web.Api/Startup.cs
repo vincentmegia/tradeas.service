@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MyCouch;
 using Tradeas.Colfinancial.Provider;
 using Tradeas.Colfinancial.Provider.Actors;
@@ -46,18 +47,18 @@ namespace Tradeas.Web.Api
                 .AddTransient<IJournalStageProcessor, JournalStageProcessor>()
                 .AddTransient<ITransactionBuilder, TransactionBuilder>()
                 .AddTransient<ITransactionProcessor, TransactionProcessor>()
-            
+
                 .AddTransient(typeof(LoginNavigator))
                 .AddTransient(typeof(BrokerTabNavigator))
-                
+
                 .AddTransient(typeof(LoginSimulator))
                 .AddTransient(typeof(BrokerTransactionSimulator))
-            
+
                 .AddTransient(typeof(BrokerTransactionScraper))
                 .AddTransient(typeof(BrokerTransactionBuilder))
                 .AddTransient(typeof(BrokerTransactionProcessor))
                 .AddTransient(typeof(ImportProcessor))
-            
+
                 .AddTransient<IJournalRepository>(factory => new JournalRepository(couchdbUrl))
                 .AddTransient<ITransactionRepository>(factory => new TransactionRepository(couchdbUrl))
                 .AddTransient<IJournalStageRepository>(factory => new JournalStageRepository(couchdbUrl))
@@ -67,13 +68,14 @@ namespace Tradeas.Web.Api
                 .AddTransient<IImportTrackerRepository>(factory => new ImportTrackerRepository(couchdbUrl))
                 .AddTransient<IImportHistoryRepository>(factory => new ImportHistoryRepository(couchdbUrl))
                 .AddTransient<IUserRepository>(factory => new UserRepository(couchdbUrl))
-            
+
                 .AddTransient<IAuthenticationService, AuthenticationService>()
-                
+                .AddSingleton<IHostedService, BrokerExtractService>()
+
                 .AddTransient(typeof(BrokerActor))
                 .AddTransient(typeof(BatchProcessor))
                 .AddTransient(typeof(TaskProcessor))
-            
+
                 .AddTransient<IExtractor, Extractor>();
         }
 
