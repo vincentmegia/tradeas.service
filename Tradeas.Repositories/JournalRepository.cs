@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using MyCouch;
+using MyCouch.Net;
 using MyCouch.Requests;
 using MyCouch.Responses;
 using Newtonsoft.Json;
@@ -12,7 +13,8 @@ namespace Tradeas.Repositories
     public class JournalRepository : MyCouchClient, IJournalRepository
     {
         public JournalRepository(string serverAddress) : base(serverAddress, "journals")
-        {}
+        {
+        }
 
         /// <summary>
         /// Gets the idea.

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using log4net;
 using MyCouch;
+using MyCouch.Net;
 using MyCouch.Requests;
 using Tradeas.Models;
 using Newtonsoft.Json;

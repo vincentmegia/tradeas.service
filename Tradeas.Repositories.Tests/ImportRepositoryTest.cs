@@ -16,7 +16,7 @@ namespace Tradeas.Repositories.Tests
             var securityRepository = new SecurityRepository("http://127.0.0.1:5984");
             var securityResult =  await securityRepository.GetAll();
             
-            var securities = securityResult.GetData<List<Security>>();
+            var securities = securityResult.GetData<List<Models.Security>>();
             var importRepository = new ImportRepository("http://127.0.0.1:5984");
             foreach (var security in securities)
             {

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using MyCouch;
 using MyCouch.Requests;
 using Newtonsoft.Json;
 using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public class ImportTrackerRepository : Repository, IImportTrackerRepository
+    public class ImportTrackerRepository : MyCouchClient, IImportTrackerRepository
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionRepository));
 
@@ -79,6 +80,11 @@ namespace Tradeas.Repositories
             };
             result.SetData(importTrackers);
             return result;
+        }
+
+        public TaskResult BulkAsync(List<string> items)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
