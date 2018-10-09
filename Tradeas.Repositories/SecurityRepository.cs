@@ -9,13 +9,12 @@ using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public class SecurityRepository : MyCouchClient, ISecurityRepository
+    public class SecurityRepository : MyCouch.MyCouchClient, ISecurityRepository
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(TransactionRepository));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(SecurityRepository));
 
         public SecurityRepository(string serverAddress) : base(serverAddress, "securities")
-        {
-        }
+        {}
 
 
         /// <summary>
@@ -25,15 +24,15 @@ namespace Tradeas.Repositories
         /// <param name="brokerTransactions">Ideas json.</param>
         public async Task<Result> GetAll()
         {
-            var queryViewRequest = new QueryViewRequest("query", "all")
+            var queryViewRequest = new QueryViewRequest("securities", "all")
                 .Configure(c => c.IncludeDocs(true));
-            var response = await Views.QueryAsync<Security>(queryViewRequest);
+            var response = await Views.QueryAsync<Models.Security>(queryViewRequest);
 
             var securities = response
                 .Rows
                 .Select(row =>
-                    (Security) JsonConvert.DeserializeObject(row.IncludedDoc,
-                        typeof(Security))) // iad to resort to this, freakin framework works finicky
+                    (Models.Security) JsonConvert.DeserializeObject(row.IncludedDoc,
+                        typeof(Models.Security))) // iad to resort to this, freakin framework works finicky
                 .ToList();
 
             var result = new TaskResult
