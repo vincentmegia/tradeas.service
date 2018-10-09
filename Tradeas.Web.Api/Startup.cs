@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +15,7 @@ using Tradeas.Colfinancial.Provider.Processors;
 using Tradeas.Colfinancial.Provider.Scrapers;
 using Tradeas.Colfinancial.Provider.Simulators;
 using Tradeas.Repositories;
+using Tradeas.Security;
 using Tradeas.Web.Api.Builders;
 using Tradeas.Web.Api.Processors;
 using Tradeas.Web.Api.Services;
@@ -39,6 +42,10 @@ namespace Tradeas.Web.Api
             //var couchdbUrl = "http://127.0.0.1:5984";
             //var couchdbUrl = "http://104.215.158.74:5984/";
             var couchdbUrl = Configuration["CouchDb:Url"];
+            var username = Crypter.DecryptString(Configuration["CouchDb:LoginCredential:Username"], "tr@d3@s.as1n");
+            var password = Crypter.DecryptString(Configuration["CouchDb:LoginCredential:Password"], "tr@d3@s.as1n");
+            couchdbUrl = string.Format(couchdbUrl, username, password);
+            
             services
                 .AddTransient<IJournalBuilder, JournalBuilder>()
                 .AddTransient<ITransactionScraper, TradeTransactionScraper>()
