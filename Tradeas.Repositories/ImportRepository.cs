@@ -10,28 +10,13 @@ using Newtonsoft.Json;
 
 namespace Tradeas.Repositories
 {
-    public class ImportRepository : MyCouchClient, IImportRepository
+    public class ImportRepository : Repository, IImportRepository
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(TransactionRepository));
 
         public ImportRepository(string serverAddress) : base(serverAddress, "imports")
         {}
 
-        
-        /// <summary>
-        /// Bulks the async.
-        /// </summary>
-        /// <returns>The async.</returns>
-        /// <param name="imports">Ideas json.</param>
-        public async Task<Result> BulkAsync(List<string> imports)
-        {
-            Logger.Info($"performing bulk imports for broker transaction total: {imports.Count}");
-            var request = new BulkRequest();
-            request.Include(imports.ToArray());
-            var response = await Documents.BulkAsync(request);
-            Logger.Info($"operaton reason: {response.Reason}");
-            return new TaskResult {IsSuccessful = true};
-        }
         
         /// <summary>
         /// Bulks the async.

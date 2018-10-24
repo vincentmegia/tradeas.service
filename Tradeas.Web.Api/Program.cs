@@ -13,10 +13,6 @@ namespace Tradeas.Web.Api
     {
         public static void Main(string[] args)
         {
-            var log4NetConfig = new XmlDocument();
-            log4NetConfig.Load(File.OpenRead("log4net.config.xml"));
-            var repo = LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(Hierarchy));
-            XmlConfigurator.Configure(repo, log4NetConfig["log4net"]);
             BuildWebHost(args).Run();
         }
 

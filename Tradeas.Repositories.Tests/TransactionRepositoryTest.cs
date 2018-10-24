@@ -17,31 +17,42 @@ namespace Tradeas.Repositories.Tests
         [Test]
         public async Task GetAllTest()
         {
-            var client = new MyCouchClient("http://127.0.0.1:5984", "transactions");
-            var queryViewRequest = new QueryViewRequest("query", "all").Configure(query => query.IncludeDocs(true));
-            var response = new ViewQueryResponse<Transaction>();
-            try
+            //var client = new MyCouchClient("https://admin:calv1nc3@tradeasdb.southeastasia.cloudapp.azure.com:6984", "tradeas");
+            var client = new MyCouchClient("http://127.0.0.1:5984", "brokers");
+            var temp = new MyCouchClient("http://127.0.0.1:5984", "brokers-temp");
+            while (true)
             {
-                response = await client.Views.QueryAsync<Transaction>(queryViewRequest);
-                var transactions = response
-                .Rows
-                .Select(row => (Transaction)JsonConvert.DeserializeObject(row.IncludedDoc, typeof(Transaction))) // iad to resort to this, freakin framework works finicky
-                .ToList();
-
-                var list = new List<string>();
-                foreach (var transaction in transactions)
+                var queryViewRequest = new QueryViewRequest("brokers", "all").Configure(query =>
+                    query.IncludeDocs(true)
+                    .Limit(1000));
+                var response = new ViewQueryResponse<Models.Broker>();
+                try
                 {
-                    if (transaction.PositionId == null)
-                        transaction.PositionId = "0";
-                    var json = JsonConvert.SerializeObject(transaction);
-                    list.Add(json);
+                    response = await client.Views.QueryAsync<Models.Broker>(queryViewRequest);
+                    var transactions = response
+                        .Rows
+                        .Select(row => row.Value)
+                        .ToList();
+
+                    if (response.Rows.Length <= 0) break;
+                    
+                    var list = new List<string>();
+                    foreach (var transaction in transactions)
+                    {
+                        transaction.Code = transaction.Id;
+                        transaction.Id += "-broker";
+                        transaction.Rev = null;
+                        var json = JsonConvert.SerializeObject(new BrokerJson(transaction));
+                        list.Add(json);
+                        //temp.Documents.PutAsync(null, null)
+                    }
+
+                    var t = await temp.Documents.BulkAsync(new BulkRequest().Include(list.ToArray()));
                 }
+                catch (Exception e)
+                {
 
-                var t = await client.Documents.BulkAsync(new BulkRequest().Include(list.ToArray()));
-            }
-            catch (Exception e)
-            {
-
+                }
             }
         }
     }

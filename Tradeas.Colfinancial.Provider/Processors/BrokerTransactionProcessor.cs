@@ -10,12 +10,12 @@ namespace Tradeas.Colfinancial.Provider.Processors
 {
     public class BrokerTransactionProcessor
     {
-        private readonly IBrokerTransactionRepository _brokerTransactionRepository;
+        private readonly ITradeasRepository _tradeasRepository;
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionProcessor));
 
-        public BrokerTransactionProcessor(IBrokerTransactionRepository brokerTransactionRepository)
+        public BrokerTransactionProcessor(ITradeasRepository tradeasRepository)
         {
-            _brokerTransactionRepository = brokerTransactionRepository;
+            _tradeasRepository = tradeasRepository;
         }
 
 
@@ -30,12 +30,12 @@ namespace Tradeas.Colfinancial.Provider.Processors
             var jsonList = new List<string>();
             foreach (var brokerTransaction in brokerTransactions)
             {
-                var json = JsonConvert.SerializeObject(brokerTransaction, new IsoDateTimeConverter {DateTimeFormat = Models.Constants.DateFormat});
+                var json = JsonConvert.SerializeObject(new BrokerTransactionJson(brokerTransaction), new IsoDateTimeConverter {DateTimeFormat = Models.Constants.DateFormat});
                 Logger.Info($"converted json: {json}");
                 jsonList.Add(json);
             }
 
-            _brokerTransactionRepository.BulkAsync(jsonList);
+            _tradeasRepository.BulkAsync(jsonList);
             var taskResult = new TaskResult { IsSuccessful = true };
             taskResult.SetData(brokerTransactions);
             return taskResult;

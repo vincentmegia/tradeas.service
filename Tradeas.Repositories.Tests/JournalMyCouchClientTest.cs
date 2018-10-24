@@ -38,7 +38,7 @@ namespace Tradeas.Repositories.Tests
                 .Select(idea => JsonConvert.SerializeObject(idea))
                 .ToList();
             var journalStageRepository = new JournalStageRepository("http://127.0.0.1:5984");
-            await journalStageRepository.BulkAsync(jsonList);
+            //await journalStageRepository.BulkAsync(jsonList);
             Assert.IsTrue(true);
         }
 

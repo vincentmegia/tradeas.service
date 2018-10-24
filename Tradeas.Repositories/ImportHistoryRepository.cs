@@ -5,7 +5,7 @@ using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public class ImportHistoryRepository : MyCouchClient, IImportHistoryRepository
+    public class ImportHistoryRepository : Repository, IImportHistoryRepository
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ImportHistoryRepository));
 

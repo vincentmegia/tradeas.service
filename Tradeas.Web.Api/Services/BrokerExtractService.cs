@@ -8,11 +8,15 @@ using Tradeas.Models;
 
 namespace Tradeas.Web.Api.Services
 {
+    /// <summary>
+    /// BrokerExtractService will only run once a day
+    /// </summary>
     public class BrokerExtractService : BackgroundService
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Program));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerExtractService));
         private readonly IConfiguration _configuration;
         private Timer _timer;
+        private bool _isDone;
 
         public BrokerExtractService(IConfiguration configuration)
         {
@@ -26,7 +30,13 @@ namespace Tradeas.Web.Api.Services
         /// <returns></returns>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(15));
+            Logger.Info("executing async task, checking if active flag is set.");
+            var isActive = Convert.ToBoolean(_configuration["BrokerExtractService:IsActive"]);
+            if (isActive)
+            {
+                Logger.Info("registering timer that will run 15mins after application initialization");
+                _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(15));
+            }
         }
 
         /// <summary>
@@ -45,6 +55,8 @@ namespace Tradeas.Web.Api.Services
         /// <param name="state"></param>
         private void DoWork(object state)
         {
+            if (_isDone) return;
+            
             var scheduledTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 15, 45, 0);
             if (DateTime.Now.TimeOfDay <= scheduledTime.TimeOfDay) return;
                 
@@ -70,6 +82,7 @@ namespace Tradeas.Web.Api.Services
             Logger.Info("executing tradeas.service broker extract http post");
             var response = client.Execute(request);
             Logger.Info($"response: {response.Content}");
+            _isDone = true;
         }
     }
 }

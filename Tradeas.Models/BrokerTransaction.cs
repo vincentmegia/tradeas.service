@@ -6,30 +6,31 @@ namespace Tradeas.Models
 {
     public class BrokerTransaction
     {
-        //[JsonProperty(PropertyName = "_id")]
-        public string Id { get; set; }
-        
-        //[JsonProperty(PropertyName = "_rev")]
-        public string Rev { get; set; }
+        public virtual string Id { get; set; }
+        public virtual string Rev { get; set; }
 
-        [JsonProperty(PropertyName = "symbol")]
+        [JsonProperty("symbol")]
         public string Symbol { get; set; }
 
-        [JsonProperty(PropertyName = "createdDate")]
+        [JsonProperty("createdDate")]
         public DateTime? CreatedDate { get; set; }
 
-        [JsonProperty(PropertyName = "updatedDate")]
+        [JsonProperty("updatedDate")]
         public DateTime? UpdatedDate { get; set; }
         
-        [JsonProperty(PropertyName = "updatedBy")]
+        [JsonProperty("updatedBy")]
         public string UpdatedBy { get; set; }
         
-        [JsonProperty(PropertyName = "createdBy")]
+        [JsonProperty("createdBy")]
         public string CreatedBy { get; set; }
 
-        [JsonProperty(PropertyName = "details")]
+        [JsonProperty("documentType")]
+        public string DocumentType => "broker-transaction";
+
+        [JsonProperty("details")]
         public List<BrokerTransactionDetail> Details { get; }
 
+        
         public BrokerTransaction()
         {
             Details = new List<BrokerTransactionDetail>();

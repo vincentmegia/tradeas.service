@@ -9,7 +9,7 @@ using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public class SecurityRepository : MyCouch.MyCouchClient, ISecurityRepository
+    public class SecurityRepository : Repository, ISecurityRepository
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(SecurityRepository));
 

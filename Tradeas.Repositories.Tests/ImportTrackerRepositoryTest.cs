@@ -41,30 +41,7 @@ namespace Tradeas.Repositories.Tests
         [Test]
         public void A()
         {
-            var client = new MyCouchClient("https://tradeasdb.southeastasia.cloudapp.azure.com:6984",
-                "broker-transactions");
-            var queryViewRequest = new QueryViewRequest("query", "new-view")
-                .Configure(c => c.IncludeDocs(true));
-            var response =  client.Views.QueryAsync<BrokerTransaction>(queryViewRequest);
-            var rows = response.ConfigureAwait(true).GetAwaiter().GetResult().Rows;
 
-
-            foreach (var resultRow in rows)
-            {
-                var item = resultRow.Value;
-                item.CreatedDate = new DateTime(2018, 10, 01);
-                try
-                {
-                    var result = client.Entities.PutAsync(item.Id, item.Rev, item);
-                    Console.WriteLine(item);
-                    Trace.WriteLine(item);
-                }
-                catch (Exception e)
-                {
-Trace.WriteLine(e);                    
-                }
-            }
-            Assert.IsTrue(true);
         }
     }
 }

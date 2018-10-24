@@ -50,7 +50,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
 
                 //await _journalStageRepository.BulkAsync(ideasJson);
                 await _journalRepository.BulkAsync(ideasJson);
-                await _transactionRepository.BulkAsync(transactionsJson);
+                _transactionRepository.BulkAsync(transactionsJson);
             }
             catch(Exception e)
             {

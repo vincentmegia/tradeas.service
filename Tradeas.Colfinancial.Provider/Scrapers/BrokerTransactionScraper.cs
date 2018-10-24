@@ -19,13 +19,13 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
     public class BrokerTransactionScraper
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionScraper));
-        private readonly IBrokerTransactionRepository _brokerTransactionRepository;
+        private readonly ITradeasRepository _tradeasRepository;
         private readonly ImportProcessor _importProcessor;
 
-        public BrokerTransactionScraper(IBrokerTransactionRepository brokerTransactionRepository,
+        public BrokerTransactionScraper(ITradeasRepository tradeasRepository,
                                         ImportProcessor importProcessor)
         {
-            _brokerTransactionRepository = brokerTransactionRepository;
+            _tradeasRepository = tradeasRepository;
             _importProcessor = importProcessor;
         }
 
@@ -53,7 +53,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                 
                 var brokerTableScraper = new BrokerTableScraper(batch.ToList(),
                     new BrokerTransactionBuilder(),
-                    new BrokerTransactionProcessor(_brokerTransactionRepository),
+                    new BrokerTransactionProcessor(_tradeasRepository),
                     new BrokerTransactionSimulator(webDriver),
                     brokerTabNavigator,
                     _importProcessor,

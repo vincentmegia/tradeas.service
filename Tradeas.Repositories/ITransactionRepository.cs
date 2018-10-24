@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public interface ITransactionRepository
+    public interface ITransactionRepository : IRepository
     {
-        Task<Result> BulkAsync(List<string> transactions);
         Task<Result> PutAsync(Transaction transaction);
         Task<Result> GetOrphanTransactions();
     }

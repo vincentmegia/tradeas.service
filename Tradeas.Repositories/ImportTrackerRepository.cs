@@ -8,13 +8,12 @@ using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public class ImportTrackerRepository : MyCouchClient, IImportTrackerRepository
+    public class ImportTrackerRepository : Repository, IImportTrackerRepository
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionRepository));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ImportTrackerRepository));
 
         public ImportTrackerRepository(string serverAddress) : base(serverAddress, "imports-tracker")
-        {
-        }
+        {}
 
 
         /// <summary>

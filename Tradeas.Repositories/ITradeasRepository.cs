@@ -1,10 +1,9 @@
-﻿
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public interface IUserRepository : IRepository
+    public interface ITradeasRepository : IRepository
     {
         Task<Result> GetUser(string username);
     }

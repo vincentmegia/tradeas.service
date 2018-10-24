@@ -4,20 +4,23 @@ namespace Tradeas.Models
 {
     public class Security
     {
-        [JsonProperty(PropertyName = "_id")]
-        public string Id { get; set; }
+        public virtual string Id { get; set; }
+        public virtual string Rev { get; set; }
         
-        [JsonProperty(PropertyName = "companyName")]
+        [JsonProperty("companyName")]
         public string CompanyName { get; set; }
         
-        [JsonProperty(PropertyName = "symbol")]
+        [JsonProperty("symbol")]
         public string Symbol { get; set; }
         
-        [JsonProperty(PropertyName = "sector")]
+        [JsonProperty("sector")]
         public string Sector { get; set; }
         
-        [JsonProperty(PropertyName = "subSector")]
+        [JsonProperty("subSector")]
         public string SubSector { get; set; }
+
+        [JsonProperty("documentType")]
+        public string DocumentType => "security";
 
         /// <summary>
         /// 

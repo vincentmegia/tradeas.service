@@ -4,14 +4,17 @@ namespace Tradeas.Models
 {
     public class Broker
     {
-        [JsonProperty(PropertyName = "_id")]
-        public string Id { get; set; }
-
-        [JsonProperty(PropertyName = "name")]
+        public virtual string Id { get; set; }
+        public virtual string Rev { get; set; }
+        
+        [JsonProperty("name")]
         public string Name { get; set; }
         
-        [JsonProperty(PropertyName = "code")]
+        [JsonProperty("code")]
         public string Code { get; set; }
+
+        [JsonProperty("documentType")]
+        public string DocumentType => "broker";
 
         public override string ToString()
         {

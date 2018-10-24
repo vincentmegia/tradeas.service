@@ -12,7 +12,7 @@ using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public class TransactionRepository : MyCouchClient, ITransactionRepository
+    public class TransactionRepository : Repository, ITransactionRepository
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(TransactionRepository));
         private const string DateFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
@@ -20,20 +20,6 @@ namespace Tradeas.Repositories
         public TransactionRepository(string serverAddress) : base(serverAddress, "transactions")
         {}
 
-        /// <summary>
-        /// Bulks the insert.
-        /// </summary>
-        /// <param name="transactions">Transactions.</param>
-        public async Task<Result> BulkAsync(List<string> transactions)
-        {
-            var request = new BulkRequest();
-            request.Include(transactions.ToArray());
-            var response = await Documents.BulkAsync(request);
-            Logger.Info("bulk transaction opeartion completed.");
-            var taskResult = new TaskResult { IsSuccessful = true };
-            taskResult.SetData(response);
-            return taskResult;
-        }
 
         /// <summary>
         /// Gets the by keys.

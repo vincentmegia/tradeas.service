@@ -1,11 +1,20 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Xml;
+using log4net;
+using log4net.Config;
+using log4net.Repository.Hierarchy;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using MyCouch;
 using Tradeas.Colfinancial.Provider;
 using Tradeas.Colfinancial.Provider.Actors;
@@ -30,22 +39,39 @@ namespace Tradeas.Web.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            var log4NetFile = configuration["Log4Net:Path"];
+            var xmlDocument = new XmlDocument();
+            xmlDocument.Load(File.OpenRead(log4NetFile));
+            var repo = LogManager.CreateRepository(Assembly.GetEntryAssembly(), typeof(Hierarchy));
+            XmlConfigurator.Configure(repo, xmlDocument["log4net"]);
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container. 
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                    .AddControllersAsServices()
-                    .AddJsonOptions(options => options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ");
-
-            //var couchdbUrl = "http://127.0.0.1:5984";
-            //var couchdbUrl = "http://104.215.158.74:5984/";
-            var couchdbUrl = Configuration["CouchDb:Url"];
-            var username = Crypter.DecryptString(Configuration["CouchDb:LoginCredential:Username"], "tr@d3@s.as1n");
-            var password = Crypter.DecryptString(Configuration["CouchDb:LoginCredential:Password"], "tr@d3@s.as1n");
-            couchdbUrl = string.Format(couchdbUrl, username, password);
+            services.AddCors()
+                .AddDistributedMemoryCache()
+                .AddSession()
+                .AddMvc()
+                .AddControllersAsServices()
+                .AddJsonOptions(options => options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ");
             
+            var couchdbUrl = Configuration["CouchDb:Url"];
+            var username = Configuration["CouchDb:LoginCredential:Username"];
+            var password = Configuration["CouchDb:LoginCredential:Password"];
+            if (username != null && password != null)
+            {
+                username = Crypter.DecryptString(Configuration["CouchDb:LoginCredential:Username"], "tr@d3@s.as1n");
+                password = Crypter.DecryptString(Configuration["CouchDb:LoginCredential:Password"], "tr@d3@s.as1n");
+                couchdbUrl = string.Format(couchdbUrl, username, password);
+            }
+
+            var key = Encoding.ASCII.GetBytes(Configuration["JwtPassPhrase"]);
+
             services
                 .AddTransient<IJournalBuilder, JournalBuilder>()
                 .AddTransient<ITransactionScraper, TradeTransactionScraper>()
@@ -69,12 +95,11 @@ namespace Tradeas.Web.Api
                 .AddTransient<IJournalRepository>(factory => new JournalRepository(couchdbUrl))
                 .AddTransient<ITransactionRepository>(factory => new TransactionRepository(couchdbUrl))
                 .AddTransient<IJournalStageRepository>(factory => new JournalStageRepository(couchdbUrl))
-                .AddTransient<IBrokerTransactionRepository>(factory => new BrokerTransactionRepository(couchdbUrl))
+                .AddTransient<ITradeasRepository>(factory => new TradeasRepository(couchdbUrl))
                 .AddTransient<IImportRepository>(factory => new ImportRepository(couchdbUrl))
                 .AddTransient<ISecurityRepository>(factory => new SecurityRepository(couchdbUrl))
                 .AddTransient<IImportTrackerRepository>(factory => new ImportTrackerRepository(couchdbUrl))
                 .AddTransient<IImportHistoryRepository>(factory => new ImportHistoryRepository(couchdbUrl))
-                .AddTransient<IUserRepository>(factory => new UserRepository(couchdbUrl))
 
                 .AddTransient<IAuthenticationService, AuthenticationService>()
                 .AddSingleton<IHostedService, BrokerExtractService>()
@@ -83,10 +108,33 @@ namespace Tradeas.Web.Api
                 .AddTransient(typeof(BatchProcessor))
                 .AddTransient(typeof(TaskProcessor))
 
-                .AddTransient<IExtractor, Extractor>();
+                .AddTransient<IExtractor, Extractor>()
+                .AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
+        /// <summary>
+        ///  This method gets called by the runtime. Use this method to configure the HTTP request pipeline. 
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -94,7 +142,15 @@ namespace Tradeas.Web.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseCors(builder =>
+                    builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin()
+                        .AllowCredentials())
+                .UseAuthentication()
+                .UseSession()
+                .UseMvc();
         }
     }
 }

@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tradeas.Models\Tradeas.Models.csproj" />
+    <ProjectReference Include="..\Tradeas.Security\Tradeas.Security.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MyCouch" Version="5.0.3" />

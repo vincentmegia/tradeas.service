@@ -36,7 +36,8 @@ namespace Tradeas.Colfinancial.Provider.Builders
             var brokerTransaction = new BrokerTransaction
             {
                 Id = $"{symbol}-{date:yyyyMMMdd}",
-                Symbol = symbol
+                Symbol = symbol,
+                CreatedDate = date
             };
 
             foreach (var row in rows)

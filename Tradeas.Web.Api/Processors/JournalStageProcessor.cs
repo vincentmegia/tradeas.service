@@ -83,7 +83,7 @@ namespace Tradeas.Web.Api.Processors
             stageIdeas.AddRange(ideas.Select(idea => JsonConvert.SerializeObject(idea)));
             stageIdeas.AddRange(newIdeas.Select(idea => JsonConvert.SerializeObject(idea)));
 
-            var taskResult = await _journalStageRepository.BulkAsync(stageIdeas);
+            var taskResult = _journalStageRepository.BulkAsync(stageIdeas);
             return taskResult;
         }
     }

@@ -10,7 +10,7 @@ using Tradeas.Models;
 
 namespace Tradeas.Repositories
 {
-    public class JournalRepository : MyCouchClient, IJournalRepository
+    public class JournalRepository : Repository, IJournalRepository
     {
         public JournalRepository(string serverAddress) : base(serverAddress, "journals")
         {
