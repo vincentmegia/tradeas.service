@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml;
 using log4net;
@@ -15,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using MyCouch;
+using Newtonsoft.Json;
 using Tradeas.Colfinancial.Provider;
 using Tradeas.Colfinancial.Provider.Actors;
 using Tradeas.Colfinancial.Provider.Builders;
@@ -58,7 +56,10 @@ namespace Tradeas.Web.Api
                 .AddSession()
                 .AddMvc()
                 .AddControllersAsServices()
-                .AddJsonOptions(options => options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ");
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ";
+            });
             
             var couchdbUrl = Configuration["CouchDb:Url"];
             var username = Configuration["CouchDb:LoginCredential:Username"];
@@ -101,7 +102,8 @@ namespace Tradeas.Web.Api
                 .AddTransient<IImportTrackerRepository>(factory => new ImportTrackerRepository(couchdbUrl))
                 .AddTransient<IImportHistoryRepository>(factory => new ImportHistoryRepository(couchdbUrl))
 
-                .AddTransient<IAuthenticationService, AuthenticationService>()
+                .AddSingleton<IAuthenticationService, AuthenticationService>()
+                .AddSingleton<IJwtService, JwtService>()
                 .AddSingleton<IHostedService, BrokerExtractService>()
 
                 .AddTransient(typeof(BrokerActor))
@@ -109,16 +111,12 @@ namespace Tradeas.Web.Api
                 .AddTransient(typeof(TaskProcessor))
 
                 .AddTransient<IExtractor, Extractor>()
-                .AddAuthentication(x =>
+                .AddAuthentication()
+                .AddJwtBearer(option =>
                 {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
+                    option.RequireHttpsMetadata = false;
+                    option.SaveToken = true;
+                    option.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),
@@ -149,7 +147,6 @@ namespace Tradeas.Web.Api
                         .AllowAnyOrigin()
                         .AllowCredentials())
                 .UseAuthentication()
-                .UseSession()
                 .UseMvc();
         }
     }

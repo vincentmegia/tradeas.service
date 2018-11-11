@@ -1,7 +1,10 @@
-﻿using log4net;
+﻿using System.Linq;
+using log4net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 using Tradeas.Models;
 using Tradeas.Web.Api.Services;
 
@@ -31,28 +34,40 @@ namespace Tradeas.Web.Api.Controllers
             var result = _authenticationService.Login(user.Username, user.Password);
             if (result == null)
                 return BadRequest(new {message = "Incorrect Username or Password"});
-
-            var key = $"{result.Username}:{result.Guid}";
-            result.Username = key;
-            HttpContext.Session.SetString(key, result.Token);
+            
+            //ensure other fields are not exposed
+            result.Id = null;
+            result.Rev = null;
+            result.FirstAccess = null;
+            result.Email = null;
+            result.FirstName = null;
+            result.LastName = null;
+            result.Address = null;
+            result.City = null;
+            result.PostalCode = null;
+            result.AboutMe = null;
+            result.Password = null;
+            result.Company = null;
+            HttpContext.Response.Headers.Add("Set-Cookie", result.Cookie);
             return Ok(result);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="username"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("validate")]
         public IActionResult Validate([FromBody]User user)
-        {
-            var token = HttpContext.Session.GetString(user.Username);
-            if (token == null || token != user.Token) return BadRequest("Invalid session token was detected");
+        {            
+            user = _authenticationService.Validate(user);
+            if (user != null) return Ok(user);
             
-            user.Token = _authenticationService.Validate(user.Token); 
-
-            return Ok(user);
+            HttpContext.Response.Headers.Remove("Set-Cookie");
+            HttpContext.Response.Headers.Remove("Authorization");
+            return BadRequest(new {message = "token is not valid, immediately terminating session."});
         }
         
         /// <summary>

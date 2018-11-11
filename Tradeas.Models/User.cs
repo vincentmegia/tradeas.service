@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 namespace Tradeas.Models
 {
+    [JsonObject("user")]
     public class User
     {
         public string Id { get; set; }
@@ -20,21 +22,22 @@ namespace Tradeas.Models
         public string AboutMe { get; set; }
         public string Token { get; set; }
         public string Guid { get; set; }
+        public string Cookie { get; set; }
         public string DocumentType => "user";
         
-        [JsonProperty("_attachments")]
-        public Attachments Attachments { get; set; }
+//        [JsonProperty("_attachments")]
+//        public Attachments Attachments { get; set; }
 
         
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool ShouldSerializeAttachments()
-        {
-            // don't serialize the Manager property if an employee is their own manager
-            return (Attachments != null);
-        }
+//        public bool ShouldSerializeAttachments()
+//        {
+//            // don't serialize the Manager property if an employee is their own manager
+//            return (Attachments != null);
+//        }
         
         /// <summary>
         /// 

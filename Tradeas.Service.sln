@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Security", "Tradeas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Security.Tests", "Tradeas.Security.Tests\Tradeas.Security.Tests.csproj", "{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradeas.Web.Api.Test", "Tradeas.Web.Api.Test\Tradeas.Web.Api.Test.csproj", "{18075F6D-C0F1-4B8A-B1A6-700B541F3415}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -59,5 +61,9 @@ Global
 		{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}.Debug|x86.Build.0 = Debug|Any CPU
 		{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{580D9BD1-D1B7-420D-8C43-E462E4A7B2C7}.Release|x86.Build.0 = Release|Any CPU
+		{18075F6D-C0F1-4B8A-B1A6-700B541F3415}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18075F6D-C0F1-4B8A-B1A6-700B541F3415}.Debug|x86.Build.0 = Debug|Any CPU
+		{18075F6D-C0F1-4B8A-B1A6-700B541F3415}.Release|x86.ActiveCfg = Release|Any CPU
+		{18075F6D-C0F1-4B8A-B1A6-700B541F3415}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

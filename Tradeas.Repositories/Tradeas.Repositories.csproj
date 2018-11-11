@@ -7,8 +7,10 @@
     <ProjectReference Include="..\Tradeas.Security\Tradeas.Security.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="MyCouch" Version="5.0.3" />
     <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="RestSharp" Version="106.5.4" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="IIdeaRepository_1.cs" />

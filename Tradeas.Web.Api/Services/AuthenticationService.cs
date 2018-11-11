@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using log4net;
@@ -15,12 +17,15 @@ namespace Tradeas.Web.Api.Services
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AuthenticationService));
         private readonly IConfiguration _configuration;
         private readonly ITradeasRepository _tradeasRepository;
+        private readonly IJwtService _jwtService;
         
         public AuthenticationService(IConfiguration configuration,
-            ITradeasRepository tradeasRepository)
+            ITradeasRepository tradeasRepository,
+            IJwtService jwtService)
         {
             _configuration = configuration;
             _tradeasRepository = tradeasRepository;
+            _jwtService = jwtService;
         }
         
         /// <summary>
@@ -34,79 +39,36 @@ namespace Tradeas.Web.Api.Services
             //put couchdb code to retrieve here
             //authentication successful so generate jwt token
             var user = _tradeasRepository
-                .GetUser(username)
+                .Login(username, password)
                 .Result
                 .GetData<User>();
 
             if (user == null) return null;
-            //decrypt password and compare
-            if (!user.Password.Equals(password, StringComparison.InvariantCultureIgnoreCase))
-                return null;
-
+            user.Username = username;
             user.Guid = Guid.NewGuid().ToString();
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtPassPhrase"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new [] 
-                {
-                    new Claim("username", user.Username),
-                    new Claim("company", user.Company),  
-                    new Claim("firstAccess", user.FirstAccess.ToString()),
-                    new Claim("email", user.Email),
-                    new Claim("firstname", user.FirstName),
-                    new Claim("lastname", user.LastName),
-                    new Claim("address", user.Address),
-                    new Claim("city", user.City),
-                    new Claim("postal", user.PostalCode),
-                    new Claim("aboutMe", user.AboutMe),
-                    new Claim("Guid", user.Guid)
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            user.Token = tokenHandler.WriteToken(token);
-            var response = ((Repository) _tradeasRepository).Entities.PostAsync(user);
-            
-            user.Id = null;
-            user.Rev = null;
-            user.FirstAccess = null;
-            user.Email = null;
-            user.FirstName = null;
-            user.LastName = null;
-            user.Address = null;
-            user.City = null;
-            user.PostalCode = null;
-            user.AboutMe = null;
-            user.Password = null;
-            user.Company = null;
-            
-            //write to users database
+            user.Token = _jwtService.GenerateToken(user);
             return user;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
-        public string Validate(string token)
+        public User Validate(User user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtPassPhrase"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            //verify token is same of username by decoding it.
+            var response = _tradeasRepository.IsCookieValid(user);
+            if (!response.Result.IsSuccessful.Value)
             {
-                Subject = new ClaimsIdentity(new [] 
-                {
-                    new Claim("oldToken", token)
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var renewedToken = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(renewedToken);
-            return tokenString;
+                _tradeasRepository.DeleteSession(user);
+                //delete session
+                user.Cookie = null;
+                user.Token = null;
+                return null;
+            }
+            user.Token = _jwtService.RegenerateToken(user.Token);
+            return user;
         }
     }
 }
