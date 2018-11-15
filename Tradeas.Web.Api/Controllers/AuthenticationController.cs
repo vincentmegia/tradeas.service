@@ -49,6 +49,9 @@ namespace Tradeas.Web.Api.Controllers
             result.Password = null;
             result.Company = null;
             HttpContext.Response.Headers.Add("Set-Cookie", result.Cookie);
+
+            var cookie = result.Cookie.Split(";")[0];
+            HttpContext.Response.Headers.Add("Cookie", cookie);            
             return Ok(result);
         }
 
