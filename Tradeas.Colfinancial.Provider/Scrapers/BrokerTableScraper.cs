@@ -56,7 +56,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                 counter++;
                 Logger.Info($"processing {counter} out of {_imports.Count}");
                 LogicalThreadContext.Properties["symbol"] = import.Symbol;
-                var importTracker = new ImportTracker(import.Symbol);
+                var importTracker = new ImportTracker(import.Symbol, transactionParameter.FromDate);
 
                 try
                 {

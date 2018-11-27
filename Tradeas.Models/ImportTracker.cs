@@ -52,10 +52,17 @@ namespace Tradeas.Models
         [JsonProperty(PropertyName = "status")]
         public string Status { get; set; }
 
+
+        public ImportTracker()
+        {}
+
+        public ImportTracker(string symbol) : this(symbol, DateTime.Now)
+        {}
         
-        public ImportTracker(string symbol)
+        public ImportTracker(string symbol, DateTime? dateTime)
         {
-            Id = $"{symbol}-{DateTime.Now:yyyyMMMdd}";
+            var date = dateTime.HasValue ? dateTime : DateTime.Now;
+            Id = $"{symbol}-{date:yyyyMMMdd}";
             Symbol = symbol;
         }
         
