@@ -10,7 +10,7 @@ using Tradeas.Web.Api.Services;
 
 namespace Tradeas.Web.Api.Controllers
 {
-    [Route("api/authentication")]
+    [Route("authentication")]
     public class AuthenticationController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(AuthenticationController));

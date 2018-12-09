@@ -23,6 +23,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
         private readonly BatchProcessor _batchProcessor;
         private readonly TaskProcessor _taskProcessor;
         private readonly IConfiguration _configuration;
+        private ImportMode _importMode;
         
         public BrokerActor(ImportProcessor importProcessor,
                            BrokerTransactionScraper brokerTransactionScraper,
@@ -35,6 +36,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
             _configuration = configuration;
             _batchProcessor = batchProcessor;
             _taskProcessor = taskProcessor;
+            _importMode = ImportMode.Normal;
         }
 
         /// <summary>
@@ -68,9 +70,9 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 for (var index = 0; index <= workerCount; index++)
                 {
                     var batch = (!string.IsNullOrEmpty(transactionParameter.Symbol))
-                        ? new List<Import> {new Import {Symbol = transactionParameter.Symbol}}
+                        ? new List<Import> { new Import {Symbol = transactionParameter.Symbol }}
                         : _batchProcessor
-                            .Process()
+                            .Process(_importMode)
                             .GetData<List<Import>>();
                     if (batch.Count == 0) continue;
                     if (index > 0)
@@ -111,6 +113,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 var isCompleted = _importProcessor.IsCompleted();
                 if (isCompleted)
                     break;
+                _importMode = ImportMode.Retry;
             }
             
             return new TaskResult {IsSuccessful = true};

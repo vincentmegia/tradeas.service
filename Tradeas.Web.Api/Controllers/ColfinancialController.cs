@@ -8,7 +8,7 @@ using Tradeas.Web.Api.Processors;
 
 namespace Tradeas.Web.Api.Controllers
 {
-    [Route("api/colfinancial")]
+    [Route("colfinancial")]
     public class ColfinancialController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ColfinancialController));

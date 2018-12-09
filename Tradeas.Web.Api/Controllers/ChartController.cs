@@ -8,7 +8,7 @@ using Tradeas.Web.Api.Services;
 
 namespace Tradeas.Web.Api.Controllers
 {
-    [Route("api/chart")]
+    [Route("chart")]
     public class ChartControllerController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ChartControllerController));

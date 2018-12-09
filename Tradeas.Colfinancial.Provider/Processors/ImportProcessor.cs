@@ -28,7 +28,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// 
         /// </summary>
         /// <returns></returns>
-        public TaskResult Process()
+        public TaskResult Process(ImportMode importMode)
         {
             _importHistoryRepository.Add(new ImportHistory("broker-transactions", "broker.service"));
 
@@ -37,12 +37,18 @@ namespace Tradeas.Colfinancial.Provider.Processors
                 .GetData<List<ImportTracker>>()
                 .ToList();
 
+            if (importMode == ImportMode.Retry)
+                importTrackers = importTrackers.FindAll(importTracker =>
+                    importTracker.Status.Equals("Retry", StringComparison.CurrentCultureIgnoreCase));
+
             var imports = _importRepository
                 .GetAll()
                 .Result
                 .GetData<List<Import>>()
                 .ToList();
+            
             imports = imports.FindAll(import => !importTrackers.Contains(new ImportTracker(import.Symbol)));
+            
            
             var taskResult = new TaskResult {IsSuccessful = true};
             taskResult.SetData(imports);

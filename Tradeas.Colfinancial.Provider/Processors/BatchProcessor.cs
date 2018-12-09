@@ -26,11 +26,11 @@ namespace Tradeas.Colfinancial.Provider.Processors
         /// 
         /// </summary>
         /// <returns></returns>
-        public TaskResult Process()
+        public TaskResult Process(ImportMode importMode)
         {
             //if (_imports == null) 
                 _imports = _importProcessor
-                .Process()
+                .Process(importMode)
                 .GetData<List<Import>>();
             Logger.Info($"imports count {_imports.Count}");
 
