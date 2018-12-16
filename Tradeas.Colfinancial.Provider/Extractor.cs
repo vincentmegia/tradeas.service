@@ -11,15 +11,15 @@ namespace Tradeas.Colfinancial.Provider
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Extractor));
         private readonly ITransactionScraper _transactionScraper;
         private readonly IPortfolioScraper _portfolioScraper;
-        private readonly BrokerActor _brokerActor;
+        private readonly BatchActor _batchActor;
             
         public Extractor(ITransactionScraper transactionScraper,
                          IPortfolioScraper portfolioScraper,
-                         BrokerActor brokerActor)
+                         BatchActor batchActor)
         {
             _transactionScraper = transactionScraper;
             _portfolioScraper = portfolioScraper;
-            _brokerActor = brokerActor;
+            _batchActor = batchActor;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Tradeas.Colfinancial.Provider
             //var portfolioScraperResult = await _portfolioScraper.Scrape(_webDriver);
             try
             {
-                var result = _brokerActor.Do(transactionParameter);
+                var result = _batchActor.Do(transactionParameter);
                 return result;
                 /*{
                     IsSuccessful = //transactionScraperResult.IsSuccessful.Value &&

@@ -10,11 +10,21 @@ using Tradeas.Colfinancial.Provider.Actors;
 
 namespace Tradeas.Colfinancial.Provider
 {
-    public static class WebDriverFactory
+    public class WebDriverFactory
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerActor));
+        private readonly ILog Logger = LogManager.GetLogger(typeof(BatchActor));
+        private readonly IConfiguration _configuration;
+
+        public WebDriverFactory(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         
-        public static IWebDriver Create(IConfiguration configuration)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IWebDriver Create()
         {
             var options = new ChromeOptions();
             options.AddArgument("headless");
@@ -25,7 +35,7 @@ namespace Tradeas.Colfinancial.Provider
                     case PlatformID.Win32S:
                     case PlatformID.Win32Windows:
                     case PlatformID.WinCE:
-                        options.BinaryLocation = configuration["ChromeDriver:Windows"];
+                        options.BinaryLocation = _configuration["ChromeDriver:Windows"];
                         break;
             }
                 

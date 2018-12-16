@@ -15,28 +15,31 @@ using Tradeas.Models;
 
 namespace Tradeas.Colfinancial.Provider.Actors
 {
-    public class BrokerActor
+    public class BatchActor
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerActor));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(BatchActor));
         private readonly ImportProcessor _importProcessor;
         private readonly BrokerTransactionScraper _brokerTransactionScraper;
         private readonly BatchProcessor _batchProcessor;
         private readonly TaskProcessor _taskProcessor;
         private readonly IConfiguration _configuration;
         private ImportMode _importMode;
+        private readonly WebDriverFactory _webDriverFactory;
         
-        public BrokerActor(ImportProcessor importProcessor,
+        public BatchActor(ImportProcessor importProcessor,
                            BrokerTransactionScraper brokerTransactionScraper,
                            BatchProcessor batchProcessor,
                            TaskProcessor taskProcessor,
-                           IConfiguration configuration)
+                           IConfiguration configuration,
+                           WebDriverFactory webDriverFactory)
         {
             _importProcessor = importProcessor;
             _brokerTransactionScraper = brokerTransactionScraper;
             _configuration = configuration;
             _batchProcessor = batchProcessor;
             _taskProcessor = taskProcessor;
-            _importMode = ImportMode.Normal;
+            _importMode = ImportMode.Batch;
+            _webDriverFactory = webDriverFactory;
         }
 
         /// <summary>
@@ -81,7 +84,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
                         Thread.Sleep(TimeSpan.FromSeconds(30));
                     }
 
-                    var webDriver = WebDriverFactory.Create(_configuration);
+                    var webDriver = _webDriverFactory.Create();
                     var task = Task
                         .Factory
                         .StartNew(() => _brokerTransactionScraper.Scrape(transactionParameter, batch, webDriver),cancellationToken);

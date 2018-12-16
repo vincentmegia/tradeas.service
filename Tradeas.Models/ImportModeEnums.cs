@@ -2,7 +2,8 @@
 {
     public enum ImportMode
     {
-        Normal,
-        Retry
+        Batch,
+        Retry,
+        Single
     }
 }

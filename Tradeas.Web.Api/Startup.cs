@@ -106,10 +106,12 @@ namespace Tradeas.Web.Api
                 .AddSingleton<IJwtService, JwtService>()
                 .AddSingleton<IHostedService, BrokerExtractService>()
 
-                .AddTransient(typeof(BrokerActor))
+                .AddTransient(typeof(BatchActor))
                 .AddTransient(typeof(BatchProcessor))
                 .AddTransient(typeof(TaskProcessor))
 
+                .AddTransient(typeof(WebDriverFactory))
+                
                 .AddTransient<IExtractor, Extractor>()
                 .AddAuthentication()
                 .AddJwtBearer(option =>
@@ -137,7 +139,8 @@ namespace Tradeas.Web.Api
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage()
+                    .UsePathBase("/api");
             }
 
             app.UseCors(builder =>

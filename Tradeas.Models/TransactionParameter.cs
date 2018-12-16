@@ -1,4 +1,5 @@
 ﻿using System;
+using Tradeas.Colfinancial.Provider;
 
 namespace Tradeas.Models
 {
@@ -10,7 +11,8 @@ namespace Tradeas.Models
         public DateTime? ToDate { get; set; }
         public string Symbol { get; set; }
         public bool? NoPurge { get; set; }
-    
+        public ImportMode Mode { get; set; }
+
 
         /// <summary>
         /// 
@@ -18,7 +20,7 @@ namespace Tradeas.Models
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{nameof(LoginCredential)}: {LoginCredential}, {nameof(Frequency)}: {Frequency}, {nameof(FromDate)}: {FromDate}, {nameof(ToDate)}: {ToDate}";
+            return $"{nameof(LoginCredential)}: {LoginCredential}, {nameof(Frequency)}: {Frequency}, {nameof(FromDate)}: {FromDate}, {nameof(ToDate)}: {ToDate}, {nameof(Symbol)}: {Symbol}, {nameof(NoPurge)}: {NoPurge}, {nameof(Mode)}: {Mode}";
         }
 
         /// <summary>
