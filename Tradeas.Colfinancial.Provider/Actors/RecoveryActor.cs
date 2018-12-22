@@ -7,25 +7,25 @@ using Tradeas.Models;
 
 namespace Tradeas.Colfinancial.Provider.Actors
 {
-    public class BatchActor
+    public class RecoveryActor
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(BatchActor));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(RecoveryActor));
         private readonly ImportProcessor _importProcessor;
         private readonly BatchProcessor _batchProcessor;
         private readonly TaskProcessor _taskProcessor;
         private readonly List<TaskActor> _taskActors;
         
-        public BatchActor(ImportProcessor importProcessor,
-                          BatchProcessor batchProcessor,
-                          TaskProcessor taskProcessor,
-                          List<TaskActor> taskActors)
+        public RecoveryActor(ImportProcessor importProcessor,
+                             BatchProcessor batchProcessor,
+                             TaskProcessor taskProcessor,
+                             List<TaskActor> taskActors)
         {
             _importProcessor = importProcessor;
             _batchProcessor = batchProcessor;
             _taskProcessor = taskProcessor;
             _taskActors = taskActors;
         }
-
+        
         /// <summary>
         /// 
         /// </summary>
@@ -34,7 +34,6 @@ namespace Tradeas.Colfinancial.Provider.Actors
         {
             var isBackOfficeException = false;
             var sleepInterval = 5;
-            _importProcessor.PurgeTrackers(transactionParameter);
             while (true)
             {
                 if (isBackOfficeException)
@@ -49,7 +48,7 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 foreach (var taskActor in _taskActors)
                 {
                     var batch = _batchProcessor
-                            .Process(ImportMode.Batch)
+                            .Process(ImportMode.Retry)
                             .GetData<List<Import>>();
                     if (batch.Count == 0) continue;
                     Thread.Sleep(TimeSpan.FromSeconds(30));
@@ -64,8 +63,8 @@ namespace Tradeas.Colfinancial.Provider.Actors
                 _taskProcessor.Dispose();
                 
                 var isCompleted = _importProcessor.IsCompleted();
-                if (isCompleted) break;
-                //send signal to recovery actor
+                if (isCompleted)
+                    break;
             }
             
             return new TaskResult {IsSuccessful = true};

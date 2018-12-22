@@ -15,7 +15,7 @@ namespace Tradeas.Repositories.Tests
     public class ImportTrackerRepositoryTest
     {
         [Test]
-        public void BuildImports()
+        public void BuildImportsTest()
         {
             var importTrackerRepository = new ImportTrackerRepository("http://127.0.0.1:5984");
             var exportedList = new List<string>
@@ -39,9 +39,13 @@ namespace Tradeas.Repositories.Tests
         }
 
         [Test]
-        public void A()
+        public void GetAllTest()
         {
-
+            var importTrackerRepository = new ImportTrackerRepository("https://admin:calv1nc3@tradeasdb.southeastasia.cloudapp.azure.com:6984");
+            importTrackerRepository
+                .GetAll()
+                .GetData<List<ImportTracker>>()
+                .ToList();
         }
     }
 }

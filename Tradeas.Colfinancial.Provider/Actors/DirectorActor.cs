@@ -6,12 +6,15 @@ namespace Tradeas.Colfinancial.Provider.Actors
     {
         private readonly SingleActor _singleActor;
         private readonly BatchActor _batchActor;
+        private readonly RecoveryActor _recoveryActor;
 
         public DirectorActor(SingleActor singleActor, 
-                             BatchActor batchActor)
+                             BatchActor batchActor,
+                             RecoveryActor recoveryActor)
         {
             _singleActor = singleActor;
             _batchActor = batchActor;
+            _recoveryActor = recoveryActor;
         }
         
         /// <summary>
@@ -30,6 +33,9 @@ namespace Tradeas.Colfinancial.Provider.Actors
                     break;
                 case ImportMode.Single:
                     _singleActor.Do(transactionParameter);
+                    break;
+                case ImportMode.Recovery:
+                    _recoveryActor.Do(transactionParameter);
                     break;
             }
             return new TaskResult();

@@ -9,7 +9,7 @@ namespace Tradeas.Colfinancial.Provider.Processors
 {
     public class BatchProcessor
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(BrokerTransactionProcessor));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(BatchProcessor));
         private readonly IConfiguration _configuration;
         private readonly ImportProcessor _importProcessor;
         public int SkipCounter { get; set; }

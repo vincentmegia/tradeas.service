@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using log4net;
-using MyCouch;
 using MyCouch.Requests;
-using Newtonsoft.Json;
 using Tradeas.Models;
 
 namespace Tradeas.Repositories
@@ -21,10 +19,23 @@ namespace Tradeas.Repositories
         /// </summary>
         /// <returns>The async.</returns>
         /// <param name="importTracker">Ideas json.</param>
+        public TaskResult PutAsync(ImportTracker importTracker)
+        {
+            Logger.Info($"upserts imported     tracker: {importTracker}");
+            var response = Entities.PutAsync(new ImportTrackerJson(importTracker));
+            Logger.Info($"operaton status code: {response.Result.StatusCode}");
+            return new TaskResult {IsSuccessful = response.Result.IsSuccess};
+        }
+        
+        /// <summary>
+        /// Bulks the async.
+        /// </summary>
+        /// <returns>The async.</returns>
+        /// <param name="importTracker">Ideas json.</param>
         public TaskResult PostAsync(ImportTracker importTracker)
         {
-            Logger.Info($"adding imported broker transaction tracker: {importTracker}");
-            var response = Entities.PostAsync(importTracker);
+            Logger.Info($"adding imported tracker: {importTracker}");
+            var response = Entities.PostAsync(new ImportTrackerJson(importTracker));
             Logger.Info($"operaton status code: {response.Result.StatusCode}");
             return new TaskResult {IsSuccessful = response.Result.IsSuccess};
         }
@@ -37,7 +48,7 @@ namespace Tradeas.Repositories
         public TaskResult DeleteAsync(ImportTracker importTracker)
         {
             Logger.Info($"deleting import tracker data: {importTracker}");
-            var response = Entities.DeleteAsync(importTracker);
+            var response = Entities.DeleteAsync(new ImportTrackerJson(importTracker));
             Logger.Info($"operaton status code: {response.Result.StatusCode}");
             return new TaskResult {IsSuccessful = response.Result.IsSuccess};
         }
@@ -59,13 +70,10 @@ namespace Tradeas.Repositories
                 return taskResult;
             }
 
-
             var importTrackers = response
                 .Result
                 .Rows
-                .Select(row =>
-                    (ImportTracker) JsonConvert.DeserializeObject(row.IncludedDoc,
-                        typeof(ImportTracker))) // iad to resort to this, freakin framework works finicky
+                .Select(importTracker => importTracker.Value)
                 .ToList();
 
             var result = new TaskResult

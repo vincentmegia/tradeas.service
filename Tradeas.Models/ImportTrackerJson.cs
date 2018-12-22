@@ -1,42 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 
 namespace Tradeas.Models
 {
-    public class ImportTracker : IEqualityComparer<ImportTracker>
+    public class ImportTrackerJson : ImportTracker, IEqualityComparer<ImportTracker>
     {
         public static IEqualityComparer<ImportTracker> SymbolComparer { get; } = new SymbolEqualityComparer();
         
-        public virtual string Id { get; set; }
-        public virtual string Rev { get; set; }
+        [JsonProperty("_id")]
+        public override string Id { get; set; }
         
-        [JsonProperty("symbol")]
-        public string Symbol { get; set; }
-        
-        [JsonProperty("createdBy")]
-        public string CreatedBy { get; }
-        
-        [JsonProperty("createdDate")]
-        public DateTime CreatedDate => DateTime.Now;
+        [JsonProperty("_rev")]
+        public override string Rev { get; set; }
 
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonProperty("$doctype")] public string DocumentType => "importTracker";
 
-
-        public ImportTracker()
-        {}
-
-        public ImportTracker(string symbol) : this(symbol, DateTime.Now)
-        {}
-        
-        public ImportTracker(string symbol, DateTime? dateTime)
+        public ImportTrackerJson(ImportTracker importTracker)
         {
-            var date = dateTime.HasValue ? dateTime : DateTime.Now;
-            Id = $"{symbol}-{date:yyyyMMMdd}";
-            Symbol = symbol;
+            Id = importTracker.Id;
+            Rev = importTracker.Rev;
+            Symbol = importTracker.Symbol;
+            Status = importTracker.Status;
         }
-
+        
         /// <summary>
         /// 
         /// </summary>

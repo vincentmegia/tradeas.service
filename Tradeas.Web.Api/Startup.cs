@@ -1,7 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using log4net;
 using log4net.Config;
@@ -14,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OpenQA.Selenium;
 using Tradeas.Colfinancial.Provider;
 using Tradeas.Colfinancial.Provider.Actors;
 using Tradeas.Colfinancial.Provider.Builders;
@@ -33,8 +37,10 @@ namespace Tradeas.Web.Api
     {
         public IContainer ApplicationContainer { get; private set; }
         public IConfiguration Configuration { get; }
+        public IServiceProvider ServiceProvider { get; }
         
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration,
+            IServiceProvider serviceProvider)
         {
             Configuration = configuration;
             var log4NetFile = configuration["Log4Net:Path"];
@@ -105,14 +111,35 @@ namespace Tradeas.Web.Api
                 .AddSingleton<IAuthenticationService, AuthenticationService>()
                 .AddSingleton<IJwtService, JwtService>()
                 .AddSingleton<IHostedService, BrokerExtractService>()
+                
+                .AddTransient(typeof(CancellationTokenSource))
+                .AddTransient(typeof(WebDriverFactory))
+                .AddTransient<List<TaskActor>>(factory =>
+                {
+                    var webDriverFactory = (WebDriverFactory)services.BuildServiceProvider().GetService(typeof(WebDriverFactory));
+                    var brokerTransactionScraper =
+                        (BrokerTransactionScraper) services.BuildServiceProvider().GetService(typeof(BrokerTransactionScraper));
+                    var cancellationTokenSource =
+                        (CancellationTokenSource) services.BuildServiceProvider().GetService(typeof(CancellationTokenSource));
+                    var workers = Convert.ToInt32(Configuration["WorkerCount"]);
+                    var taskActors = new List<TaskActor>();
+                    for (var index = 0; index <= workers - 1; index++)
+                        taskActors.Add(new TaskActor(webDriverFactory, brokerTransactionScraper, cancellationTokenSource));
 
+                    return taskActors;
+                })
+                
+            
+                .AddTransient(typeof(DirectorActor))
+                .AddTransient(typeof(RecoveryActor))
                 .AddTransient(typeof(BatchActor))
+                .AddTransient(typeof(SingleActor))
+                .AddTransient(typeof(TaskActor))
                 .AddTransient(typeof(BatchProcessor))
                 .AddTransient(typeof(TaskProcessor))
-
-                .AddTransient(typeof(WebDriverFactory))
                 
                 .AddTransient<IExtractor, Extractor>()
+
                 .AddAuthentication()
                 .AddJwtBearer(option =>
                 {
@@ -126,7 +153,6 @@ namespace Tradeas.Web.Api
                         ValidateAudience = false
                     };
                 });
-
         }
 
         

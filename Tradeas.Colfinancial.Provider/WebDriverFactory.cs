@@ -3,16 +3,14 @@ using System.IO;
 using System.Reflection;
 using log4net;
 using Microsoft.Extensions.Configuration;
-using MoreLinq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using Tradeas.Colfinancial.Provider.Actors;
 
 namespace Tradeas.Colfinancial.Provider
 {
     public class WebDriverFactory
     {
-        private readonly ILog Logger = LogManager.GetLogger(typeof(BatchActor));
+        private readonly ILog Logger = LogManager.GetLogger(typeof(WebDriverFactory));
         private readonly IConfiguration _configuration;
 
         public WebDriverFactory(IConfiguration configuration)

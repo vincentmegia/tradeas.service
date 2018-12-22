@@ -4,6 +4,7 @@
     {
         Batch,
         Retry,
-        Single
+        Single,
+        Recovery
     }
 }

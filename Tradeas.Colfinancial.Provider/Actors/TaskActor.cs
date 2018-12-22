@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using log4net;
 using OpenQA.Selenium;
 using Tradeas.Colfinancial.Provider.Scrapers;
 using Tradeas.Models;
@@ -9,39 +11,38 @@ namespace Tradeas.Colfinancial.Provider.Actors
 {
     public class TaskActor
     {
-        private readonly WebDriverFactory _webDriverFactory;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(TaskActor));
+
         private readonly BrokerTransactionScraper _brokerTransactionScraper;
-        private readonly TransactionParameter _transactionParameter;
-        private CancellationToken _cancellationToken;
-        
-        public CancellationTokenSource CancellationTokenSourceInstance { get; set; }
-        public IWebDriver WebDriverInstance { get; set; }
+        private readonly CancellationTokenSource _cancellationTokenSource;
+        private IWebDriver WebDriverInstance { get; set; }
         public Task TaskInstance { get; set; }
 
 
         public TaskActor(WebDriverFactory webDriverFactory,
-            BrokerTransactionScraper brokerTransactionScraper,
-            TransactionParameter transactionParameter)
+                         BrokerTransactionScraper brokerTransactionScraper,
+                         CancellationTokenSource cancellationTokenSource)
         {
-            _webDriverFactory = webDriverFactory;
+            WebDriverInstance = webDriverFactory.Create();
             _brokerTransactionScraper = brokerTransactionScraper;
-            _transactionParameter = transactionParameter;
-            CancellationTokenSourceInstance = new CancellationTokenSource();
-            _cancellationToken = CancellationTokenSourceInstance.Token;
+            _cancellationTokenSource = cancellationTokenSource;
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public TaskResult Do(List<Import> batch)
+        public TaskResult Do(List<Import> batch, TransactionParameter transactionParameter)
         {
-            WebDriverInstance = _webDriverFactory.Create();
             TaskInstance = Task
                 .Factory
-                .StartNew(() => _brokerTransactionScraper.Scrape(_transactionParameter, batch, WebDriverInstance),
-                    _cancellationToken);
-            return new TaskResult();
+                .StartNew(() => _brokerTransactionScraper.Scrape(transactionParameter, batch, WebDriverInstance),
+                    _cancellationTokenSource.Token);
+            var symbols = string.Join(",", batch.Select(b => b.Symbol));
+            Logger.Info($"Thread id: { TaskInstance.Id } will processing the following symbols: { symbols }");
+            LogicalThreadContext.Properties["thread-id"] = TaskInstance.Id;
+
+            return new TaskResult { IsSuccessful = true };
         }
 
         /// <summary>
@@ -49,8 +50,11 @@ namespace Tradeas.Colfinancial.Provider.Actors
         /// </summary>
         public void Dispose()
         {
+            Logger.Info($"Disposing webdriver handle: ${WebDriverInstance.CurrentWindowHandle}");
             WebDriverInstance.Quit();
             WebDriverInstance.Dispose();
+            
+            Logger.Info($"Disposing task id: : ${TaskInstance.Id}");
             TaskInstance.Dispose();
         }
     }

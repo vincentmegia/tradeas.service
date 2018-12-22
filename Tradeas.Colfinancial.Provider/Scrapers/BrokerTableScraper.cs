@@ -89,6 +89,7 @@ namespace Tradeas.Colfinancial.Provider.Scrapers
                         importTracker.Status = "Success";
                         Logger.Info($"broker transactions for completed for symbol: {import.Symbol}");
                     }
+                    importTracker.Status = "None";
                 }
                 catch (Exception e)
                 {
